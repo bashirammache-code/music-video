@@ -1,0 +1,68 @@
+<header class="site-header">
+  <div class="site-header__inner container">
+
+    <button class="site-header__menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="MobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="site-nav site-nav--left" aria-label="Primary">
+      <ul>
+        {%- for link in linklists[section.settings.menu].links limit: 4 -%}
+          <li><a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }} home">
+      {%- if settings.logo != blank -%}
+        <img src="{{ settings.logo | image_url: width: 240 }}" alt="{{ shop.name }}" width="120" loading="eager">
+      {%- else -%}
+        <span class="wordmark">IL<span class="wordmark__shadda">A</span>YYA</span>
+      {%- endif -%}
+    </a>
+
+    <div class="site-header__icons">
+      <button class="icon-btn" id="SearchToggle" aria-label="Search" aria-expanded="false" aria-controls="SearchDrawer">
+        {%- render 'icon' with 'search' -%}
+      </button>
+      <a href="{{ routes.account_url }}" class="icon-btn" aria-label="Account">
+        {%- render 'icon' with 'account' -%}
+      </a>
+      <button class="icon-btn cart-toggle" id="CartToggle" aria-label="Cart" aria-expanded="false" aria-controls="CartDrawer">
+        {%- render 'icon' with 'bag' -%}
+        <span class="cart-count" id="CartCount">{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="search-drawer" id="SearchDrawer" hidden>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-drawer__form container">
+      <input type="search" name="q" placeholder="Search jewelry" value="{{ search.terms | escape }}" aria-label="Search">
+      <input type="hidden" name="type" value="product">
+      <button type="submit">{%- render 'icon' with 'search' -%}</button>
+      <button type="button" class="search-drawer__close" id="SearchClose" aria-label="Close search">{%- render 'icon' with 'close' -%}</button>
+    </form>
+  </div>
+
+  <nav class="mobile-menu" id="MobileMenu" hidden aria-label="Mobile">
+    <ul>
+      {%- for link in linklists[section.settings.menu].links -%}
+        <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

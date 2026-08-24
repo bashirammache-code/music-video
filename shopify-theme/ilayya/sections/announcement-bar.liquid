@@ -1,0 +1,19 @@
+<div class="announcement-bar">
+  <p class="announcement-bar__message">
+    {{ section.settings.message }}
+    {%- if section.settings.link_text != blank and section.settings.link_url != blank -%}
+      <a href="{{ section.settings.link_url }}" class="announcement-bar__link">{{ section.settings.link_text }}</a>
+    {%- endif -%}
+  </p>
+</div>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    { "type": "text", "id": "message", "label": "Message", "default": "Complimentary shipping on orders over $150" },
+    { "type": "text", "id": "link_text", "label": "Link text", "default": "Shop now" },
+    { "type": "url", "id": "link_url", "label": "Link" }
+  ]
+}
+{% endschema %}

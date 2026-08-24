@@ -1,0 +1,20 @@
+{
+  "current": {
+    "color_background": "#FAF7F2",
+    "color_text": "#1B1B1B",
+    "color_accent": "#B08D57",
+    "color_surface": "#FFFFFF",
+    "color_border": "#E5DFD4",
+    "button_radius": 0
+  },
+  "presets": {
+    "Default": {
+      "color_background": "#FAF7F2",
+      "color_text": "#1B1B1B",
+      "color_accent": "#B08D57",
+      "color_surface": "#FFFFFF",
+      "color_border": "#E5DFD4",
+      "button_radius": 0
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<div class="collection section-padding">
+  <div class="container">
+    <div class="collection__header">
+      <h1 class="collection__title">
+        {%- if search.performed -%}
+          Search results for "{{ search.terms }}"
+        {%- else -%}
+          Search
+        {%- endif -%}
+      </h1>
+    </div>
+
+    {%- if search.performed -%}
+      {%- if search.results.size > 0 -%}
+        <div class="product-grid" style="--columns: 3;">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {%- render 'product-card', product: item -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p class="collection__empty">No results found for "{{ search.terms }}".</p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Search results", "settings": [] }
+{% endschema %}

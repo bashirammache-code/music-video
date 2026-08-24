@@ -1,0 +1,19 @@
+{
+  "name": "Header",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "message": "Complimentary shipping on orders over $150",
+        "link_text": "New Arrivals",
+        "link_url": "shopify://collections/new-arrivals"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {}
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

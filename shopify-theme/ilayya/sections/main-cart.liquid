@@ -1,0 +1,52 @@
+<div class="cart-page section-padding">
+  <div class="container">
+    <h1 class="cart-page__title">Your Bag</h1>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="cart-page__empty">
+        <p>Your bag is empty.</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">Continue Shopping</a>
+      </div>
+    {%- else -%}
+      {%- form 'cart', cart -%}
+        <table class="cart-table">
+          <thead>
+            <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th><th></th></tr>
+          </thead>
+          <tbody>
+            {%- for item in cart.items -%}
+              <tr>
+                <td class="cart-table__product">
+                  <a href="{{ item.url }}">
+                    {%- if item.image -%}<img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.image.alt | escape }}" width="80">{%- endif -%}
+                  </a>
+                  <div>
+                    <a href="{{ item.url }}">{{ item.product.title }}</a>
+                    {%- if item.variant.title != 'Default Title' -%}<p class="cart-table__variant">{{ item.variant.title }}</p>{%- endif -%}
+                  </div>
+                </td>
+                <td>{{ item.original_price | money }}</td>
+                <td>
+                  <input type="number" name="updates[{{ item.key }}]" value="{{ item.quantity }}" min="0" class="cart-table__qty">
+                </td>
+                <td>{{ item.final_line_price | money }}</td>
+                <td><a href="{{ item.url_to_remove }}" aria-label="Remove">{%- render 'icon' with 'close' -%}</a></td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+
+        <div class="cart-page__summary">
+          <p class="cart-page__subtotal">Subtotal <span>{{ cart.total_price | money }}</span></p>
+          <p class="cart-page__note">Shipping and taxes calculated at checkout.</p>
+          <button type="submit" name="update" class="btn btn--outline">Update Bag</button>
+          <button type="submit" name="checkout" class="btn btn--primary">Checkout</button>
+        </div>
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Cart page", "settings": [] }
+{% endschema %}

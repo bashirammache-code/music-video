@@ -1,0 +1,47 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "ILAYYA",
+    "theme_version": "1.0.0",
+    "theme_author": "ILAYYA",
+    "theme_documentation_url": "",
+    "theme_support_url": ""
+  },
+  {
+    "name": "Logo",
+    "settings": [
+      { "type": "image_picker", "id": "logo", "label": "Logo image" },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "64x64px recommended" }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      { "type": "color", "id": "color_background", "label": "Background", "default": "#FAF7F2" },
+      { "type": "color", "id": "color_text", "label": "Text", "default": "#1B1B1B" },
+      { "type": "color", "id": "color_accent", "label": "Accent (gold)", "default": "#B08D57" },
+      { "type": "color", "id": "color_surface", "label": "Surface / cards", "default": "#FFFFFF" },
+      { "type": "color", "id": "color_border", "label": "Borders", "default": "#E5DFD4" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "header", "content": "Headings use Cormorant Garamond, body uses Jost (loaded via Google Fonts in theme.liquid)." }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      { "type": "range", "id": "button_radius", "label": "Corner radius (px)", "min": 0, "max": 24, "step": 1, "default": 0 }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      { "type": "url", "id": "social_instagram_link", "label": "Instagram" },
+      { "type": "url", "id": "social_pinterest_link", "label": "Pinterest" },
+      { "type": "url", "id": "social_tiktok_link", "label": "TikTok" }
+    ]
+  }
+]

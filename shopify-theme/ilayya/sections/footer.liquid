@@ -1,0 +1,61 @@
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+
+    <div class="site-footer__brand">
+      <span class="wordmark wordmark--small">IL<span class="wordmark__shadda">A</span>YYA</span>
+      <p>{{ section.settings.brand_text }}</p>
+      <div class="site-footer__social">
+        {%- if section.settings.instagram_url != blank -%}
+          <a href="{{ section.settings.instagram_url }}" aria-label="Instagram" target="_blank" rel="noopener">{%- render 'icon' with 'instagram' -%}</a>
+        {%- endif -%}
+        {%- if section.settings.pinterest_url != blank -%}
+          <a href="{{ section.settings.pinterest_url }}" aria-label="Pinterest" target="_blank" rel="noopener">{%- render 'icon' with 'pinterest' -%}</a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- for block in section.blocks -%}
+      <div class="site-footer__col" {{ block.shopify_attributes }}>
+        <h3>{{ block.settings.heading }}</h3>
+        <ul>
+          {%- for link in linklists[block.settings.menu].links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endfor -%}
+
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    <p class="site-footer__payment">Secure checkout powered by Shopify</p>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "textarea", "id": "brand_text", "label": "Brand text", "default": "Fine jewelry, made to last. Designed in small batches, worn every day." },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+    { "type": "url", "id": "pinterest_url", "label": "Pinterest URL" }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "menu", "settings": { "heading": "Shop" } },
+      { "type": "menu", "settings": { "heading": "Help" } }
+    ]
+  }
+}
+{% endschema %}
