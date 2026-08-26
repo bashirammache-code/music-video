@@ -8,7 +8,8 @@
       width="2000"
       height="{{ 2000 | divided_by: section.settings.image.aspect_ratio }}">
   {%- else -%}
-    <div class="hero__image hero__image--placeholder"></div>
+    {%- comment -%} Falls back to the commissioned hero shoot until a real theme-setting image is uploaded here. {%- endcomment -%}
+    <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
   {%- endif -%}
 
   <div class="hero__scrim" aria-hidden="true"></div>
