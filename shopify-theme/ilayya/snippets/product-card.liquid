@@ -28,6 +28,18 @@
     {%- elsif product.tags contains 'new' -%}
       <span class="product-card__badge product-card__badge--new">New</span>
     {%- endif -%}
+    <button
+      type="button"
+      class="quick-add"
+      aria-label="Add {{ product.title | escape }} to cart"
+      data-quick-add
+      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+      data-product-title="{{ product.title | escape }}"
+      data-product-price="{{ product.price | money }}"
+      {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+    >
+      {%- render 'icon' with 'plus' -%}
+    </button>
   </a>
   <div class="product-card__info">
     <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>

@@ -2,7 +2,7 @@
   <div class="container site-footer__grid">
 
     <div class="site-footer__brand">
-      <span class="wordmark wordmark--small">IL<span class="wordmark__shadda">A</span>YYA</span>
+      <img class="footer-logo" src="{{ 'logo-full-lockup.png' | asset_url }}" alt="{{ shop.name }}" width="150" loading="lazy">
       <p>{{ section.settings.brand_text }}</p>
       <div class="site-footer__social">
         {%- if section.settings.instagram_url != blank -%}

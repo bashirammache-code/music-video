@@ -1,19 +1,36 @@
-<div class="announcement-bar">
-  <p class="announcement-bar__message">
-    {{ section.settings.message }}
-    {%- if section.settings.link_text != blank and section.settings.link_url != blank -%}
-      <a href="{{ section.settings.link_url }}" class="announcement-bar__link">{{ section.settings.link_text }}</a>
-    {%- endif -%}
-  </p>
+<div class="announcement-bar" id="AnnouncementBar" data-rotate-seconds="{{ section.settings.rotate_seconds }}">
+  {%- for block in section.blocks -%}
+    <p class="announcement-bar__message{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+      {{ block.settings.message }}
+      {%- if block.settings.link_text != blank and block.settings.link_url != blank -%}
+        <a href="{{ block.settings.link_url }}" class="announcement-bar__link">{{ block.settings.link_text }}</a>
+      {%- endif -%}
+    </p>
+  {%- endfor -%}
 </div>
 
 {% schema %}
 {
   "name": "Announcement bar",
   "settings": [
-    { "type": "text", "id": "message", "label": "Message", "default": "Complimentary shipping on orders over $150" },
-    { "type": "text", "id": "link_text", "label": "Link text", "default": "Shop now" },
-    { "type": "url", "id": "link_url", "label": "Link" }
-  ]
+    { "type": "range", "id": "rotate_seconds", "label": "Seconds between messages", "min": 3, "max": 10, "step": 1, "default": 5 }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        { "type": "text", "id": "message", "label": "Message", "default": "Free delivery on orders $75+" },
+        { "type": "text", "id": "link_text", "label": "Link text" },
+        { "type": "url", "id": "link_url", "label": "Link" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "message", "settings": { "message": "FREE DELIVERY ON ORDERS $75+" } },
+      { "type": "message", "settings": { "message": "JOIN THE LIST FOR 10% OFF YOUR FIRST ORDER" } }
+    ]
+  }
 }
 {% endschema %}

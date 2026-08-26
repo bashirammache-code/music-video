@@ -1,20 +1,24 @@
 {
   "current": {
-    "color_background": "#FAF7F2",
-    "color_text": "#1B1B1B",
-    "color_accent": "#B08D57",
-    "color_surface": "#FFFFFF",
-    "color_border": "#E5DFD4",
-    "button_radius": 0
+    "color_background": "#F6F4F1",
+    "color_text": "#241F1D",
+    "color_accent": "#8D0B0B",
+    "color_accent_deep": "#6E0808",
+    "color_surface": "#F6F4F1",
+    "color_border": "#E6DFD6",
+    "button_radius": 0,
+    "signup_popup_enabled": true
   },
   "presets": {
     "Default": {
-      "color_background": "#FAF7F2",
-      "color_text": "#1B1B1B",
-      "color_accent": "#B08D57",
-      "color_surface": "#FFFFFF",
-      "color_border": "#E5DFD4",
-      "button_radius": 0
+      "color_background": "#F6F4F1",
+      "color_text": "#241F1D",
+      "color_accent": "#8D0B0B",
+      "color_accent_deep": "#6E0808",
+      "color_surface": "#F6F4F1",
+      "color_border": "#E6DFD6",
+      "button_radius": 0,
+      "signup_popup_enabled": true
     }
   }
 }

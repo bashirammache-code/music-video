@@ -4,15 +4,21 @@
 (function () {
   'use strict';
 
-  var routes = { cartAdd: '/cart/add.js', cartChange: '/cart/change.js', cartGet: '/cart.js' };
+  var routes = {
+    cartAdd: '/cart/add.js',
+    cartChange: '/cart/change.js',
+    cartGet: '/cart.js',
+    searchSuggest: '/search/suggest.json'
+  };
 
   /* ---------- Utilities ---------- */
   function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
   function qsa(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
-  function formatMoney(cents, format) {
-    var value = (cents / 100).toFixed(2);
-    return (format || '${{amount}}').replace('{{amount}}', value);
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
   }
 
   function updateCartCount(count) {
@@ -29,7 +35,7 @@
   }
 
   function initMobileMenu() {
-    var toggle = qs('.site-header__menu-toggle');
+    var toggle = qs('#MenuToggle');
     var menu = qs('#MobileMenu');
     if (!toggle || !menu) return;
     toggle.addEventListener('click', function () {
@@ -39,25 +45,83 @@
     });
   }
 
+  /* ---------- Announcement bar: rotate between message blocks ---------- */
+  function initAnnouncementBar() {
+    var bar = qs('#AnnouncementBar');
+    if (!bar) return;
+    var messages = qsa('.announcement-bar__message', bar);
+    if (messages.length < 2) return;
+    var seconds = parseInt(bar.getAttribute('data-rotate-seconds'), 10) || 5;
+    var index = 0;
+    setInterval(function () {
+      messages[index].classList.remove('is-active');
+      index = (index + 1) % messages.length;
+      messages[index].classList.add('is-active');
+    }, seconds * 1000);
+  }
+
+  /* ---------- Search: predictive results via Shopify's suggest API ---------- */
   function initSearchDrawer() {
     var toggle = qs('#SearchToggle');
     var drawer = qs('#SearchDrawer');
     var close = qs('#SearchClose');
+    var backdrop = qs('#SearchBackdrop');
+    var input = qs('#SearchInput');
+    var results = qs('#SearchResults');
     if (!toggle || !drawer) return;
+
+    function open() {
+      toggle.setAttribute('aria-expanded', 'true');
+      toggleHidden(drawer, true);
+      setTimeout(function () { if (input) input.focus(); }, 10);
+    }
+    function closeDrawer() {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggleHidden(drawer, false);
+    }
     toggle.addEventListener('click', function () {
       var isOpen = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', String(!isOpen));
-      toggleHidden(drawer, !isOpen);
-      if (!isOpen) { var input = qs('input[type="search"]', drawer); if (input) input.focus(); }
+      if (isOpen) { closeDrawer(); } else { open(); }
     });
-    if (close) {
-      close.addEventListener('click', function () {
-        toggle.setAttribute('aria-expanded', 'false');
-        toggleHidden(drawer, false);
-      });
+    if (close) close.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !drawer.hasAttribute('hidden')) closeDrawer();
+    });
+
+    if (!input || !results) return;
+    var debounceTimer;
+    input.addEventListener('input', function () {
+      clearTimeout(debounceTimer);
+      var query = input.value.trim();
+      if (!query) { results.innerHTML = ''; return; }
+      debounceTimer = setTimeout(function () { runSearch(query); }, 250);
+    });
+
+    function runSearch(query) {
+      var url = routes.searchSuggest + '?q=' + encodeURIComponent(query) + '&resources[type]=product&resources[limit]=8';
+      fetch(url, { headers: { Accept: 'application/json' } })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var products = (data.resources && data.resources.results && data.resources.results.products) || [];
+          if (products.length === 0) {
+            results.innerHTML = '<p class="search-drawer__empty">No results for &ldquo;' + escapeHtml(query) + '&rdquo;.</p>';
+            return;
+          }
+          var html = '<p class="search-drawer__meta">' + products.length + ' result' + (products.length === 1 ? '' : 's') + '</p><ul>';
+          products.forEach(function (p) {
+            html += '<li><a href="' + p.url + '">' + escapeHtml(p.title) +
+              '<span class="cat">' + escapeHtml(p.type || '') + '</span>' +
+              '<span class="price">' + p.price + '</span></a></li>';
+          });
+          html += '</ul>';
+          results.innerHTML = html;
+        })
+        .catch(function () { /* silent: predictive search is a progressive enhancement */ });
     }
   }
 
+  /* ---------- Cart drawer ---------- */
   function openCartDrawer() {
     var drawer = qs('#CartDrawer');
     var toggle = qs('#CartToggle');
@@ -130,7 +194,130 @@
       .catch(function () { /* silent fail: count already updated */ });
   }
 
-  /* ---------- Add to cart (AJAX) ---------- */
+  /* ---------- Added-to-cart confirmation modal ----------
+     Shared by the product-page Add to Cart button and every quick-add "+"
+     (product cards and cross-sell items). Shows a brief loading state, then
+     a checkmark with View Cart / Checkout / Continue Shopping — adding no
+     longer force-opens the cart drawer on its own. */
+  var Ilayya = window.Ilayya || {};
+
+  function initAddedModal() {
+    var modal = qs('#AddedModal');
+    if (!modal) return;
+    var backdrop = qs('#AddedModalBackdrop');
+    var closeBtn = qs('#AddedModalClose');
+    var loadingEl = qs('#AddedModalLoading');
+    var successEl = qs('#AddedModalSuccess');
+    var thumbEl = qs('#AddedModalThumb');
+    var nameEl = qs('#AddedModalName');
+    var priceEl = qs('#AddedModalPrice');
+    var viewCartBtn = qs('#AddedModalViewCart');
+    var continueBtn = qs('#AddedModalContinue');
+
+    function close() { modal.setAttribute('hidden', ''); }
+
+    function show(opts) {
+      loadingEl.hidden = false;
+      successEl.hidden = true;
+      thumbEl.innerHTML = opts.thumbHtml || '';
+      modal.removeAttribute('hidden');
+      setTimeout(function () {
+        loadingEl.hidden = true;
+        successEl.hidden = false;
+        nameEl.textContent = opts.title || '';
+        priceEl.textContent = opts.price || '';
+      }, 550);
+    }
+
+    if (backdrop) backdrop.addEventListener('click', close);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (continueBtn) continueBtn.addEventListener('click', close);
+    if (viewCartBtn) {
+      viewCartBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        close();
+        openCartDrawer();
+      });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hasAttribute('hidden')) close();
+    });
+
+    Ilayya.showAddedModal = show;
+  }
+
+  /* ---------- Signup pop-up: once per visitor, after a short delay ---------- */
+  function initSignupPopup() {
+    var modal = qs('#SignupModal');
+    if (!modal) return;
+    var backdrop = qs('#SignupBackdrop');
+    var closeBtn = qs('#SignupClose');
+    var STORAGE_KEY = 'ilayya_signup_seen';
+
+    function close() { modal.setAttribute('hidden', ''); }
+    function open() { modal.removeAttribute('hidden'); }
+
+    if (backdrop) backdrop.addEventListener('click', close);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hasAttribute('hidden')) close();
+    });
+
+    var alreadySeen = false;
+    try { alreadySeen = window.localStorage.getItem(STORAGE_KEY) === '1'; } catch (err) { alreadySeen = false; }
+    var justPosted = qs('.signup-modal__success', modal);
+
+    if (!alreadySeen || justPosted) {
+      setTimeout(function () {
+        open();
+        try { window.localStorage.setItem(STORAGE_KEY, '1'); } catch (err) { /* private browsing: ignore */ }
+      }, justPosted ? 0 : 2500);
+    }
+  }
+
+  /* ---------- Quick-add "+": AJAX add straight from a product card ---------- */
+  function initQuickAdd() {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-quick-add]');
+      if (!btn || btn.hasAttribute('disabled')) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      var variantId = btn.getAttribute('data-variant-id');
+      if (!variantId) return;
+
+      var card = btn.closest('.product-card, .cross-sell__item');
+      var thumbHtml = '';
+      if (card) {
+        var img = card.querySelector('img');
+        if (img) thumbHtml = '<img src="' + img.src + '" alt="">';
+      }
+
+      fetch(routes.cartAdd, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ id: variantId, quantity: 1 })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function () {
+          return fetch(routes.cartGet).then(function (r) { return r.json(); });
+        })
+        .then(function (cart) {
+          updateCartCount(cart.item_count);
+          refreshCartDrawer();
+          if (Ilayya.showAddedModal) {
+            Ilayya.showAddedModal({
+              title: btn.getAttribute('data-product-title'),
+              price: btn.getAttribute('data-product-price'),
+              thumbHtml: thumbHtml
+            });
+          }
+        })
+        .catch(function () { /* silent fail: nothing added, count unchanged */ });
+    });
+  }
+
+  /* ---------- Add to cart (AJAX, product page form) ---------- */
   function initProductForms() {
     document.addEventListener('submit', function (e) {
       var form = e.target.closest('#ProductForm');
@@ -143,6 +330,11 @@
       if (submitText) submitText.textContent = 'Adding…';
 
       var formData = new FormData(form);
+      var qtyInput = qs('#Quantity', form);
+      var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
+
+      var mainImage = qs('.product__gallery-image.is-active');
+      var thumbHtml = mainImage ? '<img src="' + mainImage.src + '" alt="">' : '';
 
       fetch(routes.cartAdd, { method: 'POST', body: formData, headers: { Accept: 'application/json' } })
         .then(function (res) { return res.json(); })
@@ -151,10 +343,16 @@
         })
         .then(function (cart) {
           updateCartCount(cart.item_count);
-          if (submitText) submitText.textContent = 'Add to Bag';
+          if (submitText) submitText.textContent = 'Add to Cart';
           if (submitBtn) submitBtn.removeAttribute('disabled');
           refreshCartDrawer();
-          openCartDrawer();
+          if (Ilayya.showAddedModal) {
+            var priceEl = qs('#ProductPrice .price__current');
+            var titleEl = qs('.product__title');
+            var priceText = priceEl ? priceEl.textContent : '';
+            var title = (titleEl ? titleEl.textContent : '') + (qty > 1 ? ' ×' + qty : '');
+            Ilayya.showAddedModal({ title: title, price: priceText, thumbHtml: thumbHtml });
+          }
         })
         .catch(function () {
           if (submitText) submitText.textContent = 'Something went wrong';
@@ -178,10 +376,7 @@
   }
 
   /* ---------- Variant picker (main-product section) ---------- */
-  var Ilayya = window.Ilayya || {};
-
   Ilayya.initProductForm = function (sectionId) {
-    var section = document.querySelector('[id$="' + sectionId + '"]') || document;
     var script = document.getElementById('ProductVariants-' + sectionId);
     if (!script) return;
 
@@ -229,7 +424,7 @@
       if (addBtn) {
         if (variant.available) {
           addBtn.removeAttribute('disabled');
-          if (addText) addText.textContent = 'Add to Bag';
+          if (addText) addText.textContent = 'Add to Cart';
         } else {
           addBtn.setAttribute('disabled', '');
           if (addText) addText.textContent = 'Sold Out';
@@ -237,8 +432,7 @@
       }
 
       if (variant.featured_media) {
-        var img = document.querySelector('.product__gallery-image[data-media-id="' + variant.featured_media.id + '"]');
-        if (img) selectGalleryImage(variant.featured_media.id);
+        selectGalleryImage(variant.featured_media.id);
       }
     }
 
@@ -254,32 +448,75 @@
     });
   };
 
-  /* ---------- Product gallery thumbnails ---------- */
+  /* ---------- Product gallery: prev/next carousel with a "1/2" counter ---------- */
   function selectGalleryImage(mediaId) {
-    qsa('.product__gallery-image').forEach(function (img) {
+    var images = qsa('.product__gallery-image');
+    images.forEach(function (img) {
       img.classList.toggle('is-active', img.getAttribute('data-media-id') === String(mediaId));
     });
-    qsa('.product__thumb').forEach(function (thumb) {
-      thumb.classList.toggle('is-active', thumb.getAttribute('data-media-id') === String(mediaId));
-    });
+    updateGalleryCounter();
   }
 
-  function initGalleryThumbs() {
-    document.addEventListener('click', function (e) {
-      var thumb = e.target.closest('.product__thumb');
-      if (!thumb) return;
-      selectGalleryImage(thumb.getAttribute('data-media-id'));
-    });
+  function updateGalleryCounter() {
+    var images = qsa('.product__gallery-image');
+    var counter = qs('#ProductGalleryCounter');
+    if (!counter || images.length < 2) return;
+    var activeIndex = images.findIndex(function (img) { return img.classList.contains('is-active'); });
+    counter.textContent = (activeIndex + 1) + '/' + images.length;
   }
+
+  Ilayya.initProductGallery = function () {
+    var images = qsa('.product__gallery-image');
+    if (images.length === 0) return;
+
+    function step(delta) {
+      var currentIndex = images.findIndex(function (img) { return img.classList.contains('is-active'); });
+      var nextIndex = (currentIndex + delta + images.length) % images.length;
+      selectGalleryImage(images[nextIndex].getAttribute('data-media-id'));
+    }
+
+    var prevBtn = qs('[data-gallery-prev]');
+    var nextBtn = qs('[data-gallery-next]');
+    if (prevBtn) prevBtn.addEventListener('click', function () { step(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { step(1); });
+  };
+
+  /* ---------- Cross-sell: fetch native product recommendations ---------- */
+  Ilayya.initCrossSell = function () {
+    var container = qs('#ProductRecommendations');
+    var row = qs('#CrossSellRow', container);
+    if (!container || !row) return;
+
+    fetch(container.getAttribute('data-url'))
+      .then(function (res) { return res.text(); })
+      .then(function (html) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+        var items = doc.querySelectorAll('.cross-sell__item');
+        if (items.length === 0) return;
+        row.innerHTML = '';
+        items.forEach(function (item) { row.appendChild(item); });
+        container.removeAttribute('hidden');
+      })
+      .catch(function () { /* silent: cross-sell is a progressive enhancement */ });
+
+    var prevBtn = qs('[data-cross-sell-prev]');
+    var nextBtn = qs('[data-cross-sell-next]');
+    if (prevBtn) prevBtn.addEventListener('click', function () { row.scrollBy({ left: -320, behavior: 'smooth' }); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { row.scrollBy({ left: 320, behavior: 'smooth' }); });
+  };
 
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
+    initAnnouncementBar();
     initSearchDrawer();
     initCartDrawer();
+    initAddedModal();
+    initSignupPopup();
+    initQuickAdd();
     initProductForms();
     initQuantitySteppers();
-    initGalleryThumbs();
   });
 
   window.Ilayya = Ilayya;

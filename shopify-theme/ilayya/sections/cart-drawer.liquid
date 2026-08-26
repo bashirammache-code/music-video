@@ -9,8 +9,8 @@
     <div class="cart-drawer__body" id="CartDrawerBody">
       {%- if cart.item_count == 0 -%}
         <div class="cart-drawer__empty">
-          <p>Your bag is empty.</p>
-          <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline">Continue shopping</a>
+          <p>Your cart is currently empty.</p>
+          <a href="{{ routes.root_url }}#shop" class="btn btn--primary">Shop Here</a>
         </div>
       {%- else -%}
         <ul class="cart-drawer__items">
