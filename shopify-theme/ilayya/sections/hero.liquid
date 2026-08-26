@@ -11,6 +11,8 @@
     <div class="hero__image hero__image--placeholder"></div>
   {%- endif -%}
 
+  <div class="hero__scrim" aria-hidden="true"></div>
+
   <div class="hero__content hero__content--{{ section.settings.alignment }}">
     {%- if section.settings.eyebrow != blank -%}
       <p class="hero__eyebrow">{{ section.settings.eyebrow }}</p>
