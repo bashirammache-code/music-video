@@ -126,10 +126,14 @@ it flat for a plain link.
 - **Announcement bar (pop-up) → "Show first-order discount pop-up"**: on by
   default. It appears once per visitor (remembered in their browser),
   after a short delay.
-- **Home page**: set the Hero section's image, headline, and button link
-  (point it at your Earrings, Bracelets, or Necklaces collection). Fill in
-  the Featured Collection, Category tiles, Brand story, and Testimonials
-  sections.
+- **Home page**: the Hero section defaults to the **two-image layout** — the
+  commissioned lifestyle portrait side-by-side with the Gold Moon Hoop
+  Earrings product shot, and the headline/copy floating in a card over the
+  seam between them (stacks vertically on mobile). Switch **Layout** back to
+  "Single image" for the original full-bleed banner if you'd rather. Set the
+  Hero section's image(s), headline, and button link (point it at your
+  Earrings, Bracelets, or Necklaces collection). Fill in the Featured
+  Collection, Category tiles, Brand story, and Testimonials sections.
 - **Header/Footer**: confirm the correct menus are selected, add your
   Instagram/Pinterest links.
 - **Product page**: the "Materials & Care" and "Shipping & Returns"

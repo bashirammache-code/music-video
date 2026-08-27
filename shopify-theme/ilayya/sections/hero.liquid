@@ -1,15 +1,51 @@
-<div class="hero" style="--hero-height: {{ section.settings.height }}px;">
-  {%- if section.settings.image != blank -%}
-    <img
-      src="{{ section.settings.image | image_url: width: 2000 }}"
-      alt="{{ section.settings.image.alt | escape }}"
-      class="hero__image"
-      loading="eager"
-      width="2000"
-      height="{{ 2000 | divided_by: section.settings.image.aspect_ratio }}">
+{%- liquid
+  assign layout = section.settings.layout
+-%}
+<div class="hero hero--{{ layout }}" style="--hero-height: {{ section.settings.height }}px;">
+  {%- if layout == 'two_image' -%}
+    <div class="hero__split">
+      <div class="hero__split-item hero__split-item--lifestyle">
+        {%- if section.settings.image != blank -%}
+          <img
+            src="{{ section.settings.image | image_url: width: 1600 }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            class="hero__image"
+            loading="eager"
+            width="1600"
+            height="{{ 1600 | divided_by: section.settings.image.aspect_ratio }}">
+        {%- else -%}
+          {%- comment -%} Falls back to the commissioned hero shoot until a real theme-setting image is uploaded here. {%- endcomment -%}
+          <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
+        {%- endif -%}
+      </div>
+      <div class="hero__split-item hero__split-item--product">
+        {%- if section.settings.image_2 != blank -%}
+          <img
+            src="{{ section.settings.image_2 | image_url: width: 1200 }}"
+            alt="{{ section.settings.image_2.alt | escape }}"
+            class="hero__image hero__image--contain"
+            loading="eager"
+            width="1200"
+            height="{{ 1200 | divided_by: section.settings.image_2.aspect_ratio }}">
+        {%- else -%}
+          {%- comment -%} Falls back to the Gold Moon Hoop Earrings product shot until a real theme-setting image is uploaded here. {%- endcomment -%}
+          <img src="{{ 'hero-default-product.jpg' | asset_url }}" alt="" class="hero__image hero__image--contain" loading="eager" width="700" height="590">
+        {%- endif -%}
+      </div>
+    </div>
   {%- else -%}
-    {%- comment -%} Falls back to the commissioned hero shoot until a real theme-setting image is uploaded here. {%- endcomment -%}
-    <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
+    {%- if section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 2000 }}"
+        alt="{{ section.settings.image.alt | escape }}"
+        class="hero__image"
+        loading="eager"
+        width="2000"
+        height="{{ 2000 | divided_by: section.settings.image.aspect_ratio }}">
+    {%- else -%}
+      {%- comment -%} Falls back to the commissioned hero shoot until a real theme-setting image is uploaded here. {%- endcomment -%}
+      <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
+    {%- endif -%}
   {%- endif -%}
 
   <div class="hero__scrim" aria-hidden="true"></div>
@@ -32,7 +68,12 @@
 {
   "name": "Hero banner",
   "settings": [
+    { "type": "select", "id": "layout", "label": "Layout", "options": [
+        { "value": "single", "label": "Single image" },
+        { "value": "two_image", "label": "Two images (lifestyle + product)" }
+      ], "default": "two_image" },
     { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "image_picker", "id": "image_2", "label": "Second image (two-image layout only)", "info": "Shown alongside the first image when layout is set to \"Two images\". Ignored for the single-image layout." },
     { "type": "range", "id": "height", "label": "Height (px)", "min": 400, "max": 900, "step": 20, "default": 680 },
     { "type": "select", "id": "alignment", "label": "Content alignment", "options": [
         { "value": "left", "label": "Left" },
