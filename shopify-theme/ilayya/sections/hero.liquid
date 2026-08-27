@@ -1,52 +1,45 @@
 {%- liquid
-  assign layout = section.settings.layout
+  assign blocks = section.blocks
+  assign slide_count = blocks.size
+  if slide_count == 0
+    assign slide_count = 2
+  endif
 -%}
-<div class="hero hero--{{ layout }}" style="--hero-height: {{ section.settings.height }}px;">
-  {%- if layout == 'two_image' -%}
-    <div class="hero__split">
-      <div class="hero__split-item hero__split-item--lifestyle">
-        {%- if section.settings.image != blank -%}
+<div
+  class="hero-slideshow"
+  style="--hero-height: {{ section.settings.height }}px;"
+  data-hero-slideshow
+  data-autoplay-seconds="{{ section.settings.autoplay_seconds }}">
+  <div class="hero-slideshow__track" data-hero-track>
+    {%- for block in blocks -%}
+      <div class="hero-slideshow__slide" {{ block.shopify_attributes }}>
+        {%- assign slide_image = block.settings.image -%}
+        {%- if slide_image != blank -%}
           <img
-            src="{{ section.settings.image | image_url: width: 1600 }}"
-            alt="{{ section.settings.image.alt | escape }}"
+            src="{{ slide_image | image_url: width: 2000 }}"
+            alt="{{ slide_image.alt | escape }}"
             class="hero__image"
-            loading="eager"
-            width="1600"
-            height="{{ 1600 | divided_by: section.settings.image.aspect_ratio }}">
-        {%- else -%}
-          {%- comment -%} Falls back to the commissioned hero shoot until a real theme-setting image is uploaded here. {%- endcomment -%}
+            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+            width="2000"
+            height="{{ 2000 | divided_by: slide_image.aspect_ratio }}">
+        {%- elsif forloop.index == 1 -%}
+          {%- comment -%} Falls back to the commissioned hero shoot until a real image is uploaded to this slide. {%- endcomment -%}
           <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
+        {%- elsif forloop.index == 2 -%}
+          {%- comment -%} Falls back to the Gold Moon Hoop Earrings product shot until a real image is uploaded to this slide. {%- endcomment -%}
+          <img src="{{ 'hero-default-product.jpg' | asset_url }}" alt="" class="hero__image hero__image--contain" loading="lazy" width="700" height="590">
         {%- endif -%}
       </div>
-      <div class="hero__split-item hero__split-item--product">
-        {%- if section.settings.image_2 != blank -%}
-          <img
-            src="{{ section.settings.image_2 | image_url: width: 1200 }}"
-            alt="{{ section.settings.image_2.alt | escape }}"
-            class="hero__image hero__image--contain"
-            loading="eager"
-            width="1200"
-            height="{{ 1200 | divided_by: section.settings.image_2.aspect_ratio }}">
-        {%- else -%}
-          {%- comment -%} Falls back to the Gold Moon Hoop Earrings product shot until a real theme-setting image is uploaded here. {%- endcomment -%}
-          <img src="{{ 'hero-default-product.jpg' | asset_url }}" alt="" class="hero__image hero__image--contain" loading="eager" width="700" height="590">
-        {%- endif -%}
-      </div>
-    </div>
-  {%- else -%}
-    {%- if section.settings.image != blank -%}
-      <img
-        src="{{ section.settings.image | image_url: width: 2000 }}"
-        alt="{{ section.settings.image.alt | escape }}"
-        class="hero__image"
-        loading="eager"
-        width="2000"
-        height="{{ 2000 | divided_by: section.settings.image.aspect_ratio }}">
     {%- else -%}
-      {%- comment -%} Falls back to the commissioned hero shoot until a real theme-setting image is uploaded here. {%- endcomment -%}
-      <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
-    {%- endif -%}
-  {%- endif -%}
+      {%- comment -%} No slide blocks added yet — show the two commissioned defaults so the section never renders empty. {%- endcomment -%}
+      <div class="hero-slideshow__slide">
+        <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
+      </div>
+      <div class="hero-slideshow__slide">
+        <img src="{{ 'hero-default-product.jpg' | asset_url }}" alt="" class="hero__image hero__image--contain" loading="lazy" width="700" height="590">
+      </div>
+    {%- endfor -%}
+  </div>
 
   <div class="hero__scrim" aria-hidden="true"></div>
 
@@ -62,19 +55,24 @@
       <a href="{{ section.settings.button_url }}" class="btn btn--primary btn--light">{{ section.settings.button_label }}</a>
     {%- endif -%}
   </div>
+
+  {%- if slide_count > 1 -%}
+    <button type="button" class="hero-slideshow__arrow hero-slideshow__arrow--prev" data-hero-prev aria-label="Previous slide">&#8249;</button>
+    <button type="button" class="hero-slideshow__arrow hero-slideshow__arrow--next" data-hero-next aria-label="Next slide">&#8250;</button>
+    <div class="hero-slideshow__dots" data-hero-dots>
+      {%- for i in (1..slide_count) -%}
+        <button type="button" class="hero-slideshow__dot{% if forloop.first %} is-active{% endif %}" data-hero-dot data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"></button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
 </div>
 
 {% schema %}
 {
   "name": "Hero banner",
   "settings": [
-    { "type": "select", "id": "layout", "label": "Layout", "options": [
-        { "value": "single", "label": "Single image" },
-        { "value": "two_image", "label": "Two images (lifestyle + product)" }
-      ], "default": "two_image" },
-    { "type": "image_picker", "id": "image", "label": "Image" },
-    { "type": "image_picker", "id": "image_2", "label": "Second image (two-image layout only)", "info": "Shown alongside the first image when layout is set to \"Two images\". Ignored for the single-image layout." },
     { "type": "range", "id": "height", "label": "Height (px)", "min": 400, "max": 900, "step": 20, "default": 680 },
+    { "type": "range", "id": "autoplay_seconds", "label": "Autoplay speed (seconds)", "info": "Set to 0 to disable autoplay — slides still swipe manually.", "min": 0, "max": 12, "step": 1, "default": 5 },
     { "type": "select", "id": "alignment", "label": "Content alignment", "options": [
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" }
@@ -85,6 +83,23 @@
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop New Arrivals" },
     { "type": "url", "id": "button_url", "label": "Button link" }
   ],
-  "presets": [{ "name": "Hero banner" }]
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero banner",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
 }
 {% endschema %}

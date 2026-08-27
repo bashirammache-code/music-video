@@ -481,6 +481,136 @@
     if (nextBtn) nextBtn.addEventListener('click', function () { step(1); });
   };
 
+  /* ---------- Hero: swipeable, autoplaying slideshow ---------- */
+  function initHeroSlideshow() {
+    var root = qs('[data-hero-slideshow]');
+    if (!root) return;
+    var track = qs('[data-hero-track]', root);
+    var realSlides = qsa('.hero-slideshow__slide', track);
+    var dots = qsa('[data-hero-dot]', root);
+    if (!track || realSlides.length < 2) return;
+
+    var realCount = realSlides.length;
+
+    // Clone the first/last slide on either end so autoplay and swipes can
+    // cross the start/end boundary without a visible jump-back.
+    var firstClone = realSlides[0].cloneNode(true);
+    var lastClone = realSlides[realCount - 1].cloneNode(true);
+    firstClone.setAttribute('aria-hidden', 'true');
+    lastClone.setAttribute('aria-hidden', 'true');
+    track.appendChild(firstClone);
+    track.insertBefore(lastClone, realSlides[0]);
+
+    var position = 1; // 1..realCount map to the real slides; 0 and realCount+1 are the clones
+    var slideWidth = root.getBoundingClientRect().width;
+    var isDragging = false;
+    var dragStartX = 0;
+    var dragStartY = 0;
+    var dragDeltaX = 0;
+    var directionLocked = null; // 'x' | 'y'
+    var autoplayTimer = null;
+    var autoplaySeconds = parseFloat(root.getAttribute('data-autoplay-seconds')) || 0;
+
+    function setTransform(withTransition) {
+      track.style.transition = withTransition ? 'transform .5s ease' : 'none';
+      track.style.transform = 'translateX(' + (-position * slideWidth) + 'px)';
+    }
+
+    function activeRealIndex() {
+      return (position - 1 + realCount) % realCount;
+    }
+
+    function updateDots() {
+      var index = activeRealIndex();
+      dots.forEach(function (dot, i) { dot.classList.toggle('is-active', i === index); });
+    }
+
+    function goTo(newPosition) {
+      position = newPosition;
+      setTransform(true);
+      updateDots();
+    }
+
+    track.addEventListener('transitionend', function () {
+      if (position === 0) {
+        position = realCount;
+        setTransform(false);
+      } else if (position === realCount + 1) {
+        position = 1;
+        setTransform(false);
+      }
+    });
+
+    function stopAutoplay() {
+      if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+    }
+    function startAutoplay() {
+      stopAutoplay();
+      if (autoplaySeconds > 0) {
+        autoplayTimer = setInterval(function () { goTo(position + 1); }, autoplaySeconds * 1000);
+      }
+    }
+
+    var prevBtn = qs('[data-hero-prev]', root);
+    var nextBtn = qs('[data-hero-next]', root);
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(position - 1); startAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(position + 1); startAutoplay(); });
+    dots.forEach(function (dot, i) {
+      dot.addEventListener('click', function () { goTo(i + 1); startAutoplay(); });
+    });
+
+    /* Touch swipe — locks to horizontal vs. vertical on the first move so a
+       vertical scroll gesture isn't hijacked. */
+    root.addEventListener('touchstart', function (e) {
+      var t = e.touches[0];
+      dragStartX = t.clientX;
+      dragStartY = t.clientY;
+      dragDeltaX = 0;
+      directionLocked = null;
+      isDragging = true;
+      stopAutoplay();
+      track.style.transition = 'none';
+    }, { passive: true });
+
+    root.addEventListener('touchmove', function (e) {
+      if (!isDragging) return;
+      var t = e.touches[0];
+      var dx = t.clientX - dragStartX;
+      var dy = t.clientY - dragStartY;
+      if (!directionLocked) {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        directionLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+      if (directionLocked === 'y') { isDragging = false; return; }
+      e.preventDefault();
+      dragDeltaX = dx;
+      track.style.transform = 'translateX(' + (-position * slideWidth + dragDeltaX) + 'px)';
+    }, { passive: false });
+
+    root.addEventListener('touchend', function () {
+      if (!isDragging) { startAutoplay(); return; }
+      isDragging = false;
+      var threshold = slideWidth * 0.15;
+      if (dragDeltaX < -threshold) {
+        goTo(position + 1);
+      } else if (dragDeltaX > threshold) {
+        goTo(position - 1);
+      } else {
+        setTransform(true);
+      }
+      startAutoplay();
+    });
+
+    window.addEventListener('resize', function () {
+      slideWidth = root.getBoundingClientRect().width;
+      setTransform(false);
+    });
+
+    setTransform(false);
+    updateDots();
+    startAutoplay();
+  }
+
   /* ---------- Cross-sell: fetch native product recommendations ---------- */
   Ilayya.initCrossSell = function () {
     var container = qs('#ProductRecommendations');
@@ -510,6 +640,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
     initAnnouncementBar();
+    initHeroSlideshow();
     initSearchDrawer();
     initCartDrawer();
     initAddedModal();
