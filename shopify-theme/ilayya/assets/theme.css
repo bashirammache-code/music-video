@@ -205,6 +205,8 @@ p { margin: 0; }
 }
 .hero__content > * { pointer-events: auto; }
 .hero__content--center { margin: 0 auto; text-align: center; }
+.hero__content--left { left: 96px; text-align: left; } /* clears the prev arrow (left:20px, 44px wide) */
+@media (max-width: 749px) { .hero__content--left { left: 24px; } }
 .hero__eyebrow { text-transform: uppercase; letter-spacing: .2em; font-size: .75rem; margin-bottom: 18px; opacity: .9; }
 .hero__heading { font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.1; margin-bottom: 18px; color: inherit; letter-spacing: -0.02em; }
 .hero__subheading { font-size: 1.05rem; margin-bottom: 30px; opacity: .95; }
@@ -297,9 +299,24 @@ p { margin: 0; }
 .brand-story__grid--right { direction: rtl; }
 .brand-story__grid--right > * { direction: ltr; }
 .brand-story__media img, .brand-story__placeholder { width: 100%; aspect-ratio: 4/5; object-fit: cover; background: linear-gradient(135deg, var(--color-border), var(--color-background)); }
+.brand-story__media--stacked { display: flex; flex-direction: column; gap: 20px; }
+.brand-story__media--stacked img { aspect-ratio: 6/5; }
 .brand-story__content h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: 20px; }
 .brand-story__text { margin-bottom: 28px; opacity: .85; }
 @media (max-width: 900px) { .brand-story__grid { grid-template-columns: 1fr; gap: 32px; } .brand-story__grid--right { direction: ltr; } }
+
+/* ---------- Category icons row ---------- */
+.category-icons__row { display: flex; justify-content: center; flex-wrap: wrap; gap: 56px; }
+.category-icons__item { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--color-text); }
+.category-icons__icon {
+  width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center; color: var(--color-accent);
+  transition: border-color .2s ease, background .2s ease;
+}
+.category-icons__icon svg { width: 26px; height: 26px; }
+.category-icons__item:hover .category-icons__icon { border-color: var(--color-accent); background: var(--color-surface); }
+.category-icons__label { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; }
+@media (max-width: 749px) { .category-icons__row { gap: 32px; } }
 
 /* ---------- Testimonials ---------- */
 .testimonials { background: var(--color-surface); }

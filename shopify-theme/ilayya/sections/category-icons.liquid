@@ -1,0 +1,51 @@
+<div class="section-padding category-icons">
+  <div class="container">
+    <div class="category-icons__row">
+      {%- for block in section.blocks -%}
+        <a href="{{ block.settings.collection.url | default: '#' }}" class="category-icons__item" {{ block.shopify_attributes }}>
+          <span class="category-icons__icon">{% render 'icon' with block.settings.icon %}</span>
+          <span class="category-icons__label">{{ block.settings.label }}</span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Category icons",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "options": [
+            { "value": "category-earrings", "label": "Earrings" },
+            { "value": "category-necklace", "label": "Necklace" },
+            { "value": "category-bracelet", "label": "Bracelet" }
+          ], "default": "category-earrings" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Earrings" },
+        { "type": "collection", "id": "collection", "label": "Collection" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "category", "settings": { "icon": "category-earrings", "label": "Earrings" } },
+      { "type": "category", "settings": { "icon": "category-necklace", "label": "Necklaces" } },
+      { "type": "category", "settings": { "icon": "category-bracelet", "label": "Bracelets" } }
+    ]
+  },
+  "presets": [
+    {
+      "name": "Category icons",
+      "blocks": [
+        { "type": "category", "settings": { "icon": "category-earrings", "label": "Earrings" } },
+        { "type": "category", "settings": { "icon": "category-necklace", "label": "Necklaces" } },
+        { "type": "category", "settings": { "icon": "category-bracelet", "label": "Bracelets" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

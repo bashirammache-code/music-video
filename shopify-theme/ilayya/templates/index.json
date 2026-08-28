@@ -9,6 +9,36 @@
       },
       "block_order": ["slide-1", "slide-2"]
     },
+    "split-promo": {
+      "type": "rich-text",
+      "settings": {
+        "image_position": "right",
+        "eyebrow": "Gold Edit",
+        "heading": "Gold For Every Occasion",
+        "text": "<p>From everyday layering pieces to the ones you reach for when it matters — cast in solid gold, finished by hand, made to be worn.</p>",
+        "button_label": "Shop Gold",
+        "button_url": ""
+      }
+    },
+    "category-icons": {
+      "type": "category-icons",
+      "settings": {},
+      "blocks": {
+        "earrings": {
+          "type": "category",
+          "settings": { "icon": "category-earrings", "label": "Earrings", "collection": "gid://shopify/Collection/516795629849" }
+        },
+        "necklaces": {
+          "type": "category",
+          "settings": { "icon": "category-necklace", "label": "Necklaces", "collection": "gid://shopify/Collection/516795695385" }
+        },
+        "bracelets": {
+          "type": "category",
+          "settings": { "icon": "category-bracelet", "label": "Bracelets", "collection": "gid://shopify/Collection/516795662617" }
+        }
+      },
+      "block_order": ["earrings", "necklaces", "bracelets"]
+    },
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
@@ -44,5 +74,5 @@
       "settings": {}
     }
   },
-  "order": ["hero", "featured-collection", "collection-list", "rich-text", "testimonials"]
+  "order": ["hero", "split-promo", "category-icons", "featured-collection", "collection-list", "rich-text", "testimonials"]
 }
