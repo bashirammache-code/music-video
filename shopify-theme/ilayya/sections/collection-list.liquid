@@ -6,22 +6,11 @@
     <div class="category-grid">
       {%- for block in section.blocks -%}
         <a href="{{ block.settings.collection.url | default: '#' }}" class="category-tile" {{ block.shopify_attributes }}>
-          <div class="category-tile__media">
-            {%- if block.settings.image != blank -%}
-              <img src="{{ block.settings.image | image_url: width: 800 }}" alt="" loading="lazy" width="800" height="{{ 800 | divided_by: block.settings.image.aspect_ratio }}">
-            {%- elsif forloop.index == 1 -%}
-              {%- comment -%} Falls back to the Gold Moon Hoop Earrings product shot until a real image is uploaded to this block. {%- endcomment -%}
-              <img src="{{ 'hero-default-product.jpg' | asset_url }}" alt="" loading="lazy" width="700" height="590" class="category-tile__img--contain">
-            {%- elsif forloop.index == 2 -%}
-              {%- comment -%} No Bracelets product photography yet — a plain photo crop of the lifestyle shot didn't read as distinct from the Necklaces tile, so this shows the category icon until a real image is uploaded here. {%- endcomment -%}
-              <div class="category-tile__placeholder">{% render 'icon' with 'category-bracelet' %}</div>
-            {%- elsif forloop.index == 3 -%}
-              {%- comment -%} No Necklaces product photography yet — see the Bracelets note above. {%- endcomment -%}
-              <div class="category-tile__placeholder">{% render 'icon' with 'category-necklace' %}</div>
-            {%- else -%}
-              <div class="category-tile__placeholder"></div>
-            {%- endif -%}
-          </div>
+          {%- if block.settings.image != blank -%}
+            <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.label }}" loading="lazy" width="800" height="{{ 800 | divided_by: block.settings.image.aspect_ratio }}">
+          {%- else -%}
+            <div class="category-tile__placeholder"></div>
+          {%- endif -%}
           <span class="category-tile__label">{{ block.settings.label }}</span>
         </a>
       {%- endfor -%}
