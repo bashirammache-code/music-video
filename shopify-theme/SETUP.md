@@ -127,9 +127,9 @@ it flat for a plain link.
   default. It appears once per visitor (remembered in their browser),
   after a short delay.
 - **Home page**: the Hero section is a full-bleed **swipeable slideshow** —
-  add a **Slide** block per image (it ships with two: the commissioned
-  lifestyle portrait and the Gold Moon Hoop Earrings product shot), reorder
-  or add more from the theme editor's block list. It autoplays (interval
+  add a **Slide** block per image (it ships with two commissioned lifestyle
+  portraits), reorder or add more from the theme editor's block list. It
+  autoplays (interval
   editable under the section's **Autoplay speed** setting, 0 to disable),
   and visitors can swipe on touch or use the arrows/dots on desktop. The
   headline/copy stays fixed over the slides. Fill in the Featured

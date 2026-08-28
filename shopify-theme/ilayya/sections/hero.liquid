@@ -26,8 +26,8 @@
           {%- comment -%} Falls back to the commissioned hero shoot until a real image is uploaded to this slide. {%- endcomment -%}
           <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
         {%- elsif forloop.index == 2 -%}
-          {%- comment -%} Falls back to the Gold Moon Hoop Earrings product shot until a real image is uploaded to this slide. {%- endcomment -%}
-          <img src="{{ 'hero-default-product.jpg' | asset_url }}" alt="" class="hero__image hero__image--contain" loading="lazy" width="700" height="590">
+          {%- comment -%} Falls back to the second commissioned hero shoot until a real image is uploaded to this slide. {%- endcomment -%}
+          <img src="{{ 'hero-default-2.jpg' | asset_url }}" alt="" class="hero__image" loading="lazy" width="1006" height="1190">
         {%- endif -%}
       </div>
     {%- else -%}
@@ -36,7 +36,7 @@
         <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
       </div>
       <div class="hero-slideshow__slide">
-        <img src="{{ 'hero-default-product.jpg' | asset_url }}" alt="" class="hero__image hero__image--contain" loading="lazy" width="700" height="590">
+        <img src="{{ 'hero-default-2.jpg' | asset_url }}" alt="" class="hero__image" loading="lazy" width="1006" height="1190">
       </div>
     {%- endfor -%}
   </div>
