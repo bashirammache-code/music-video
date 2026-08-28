@@ -12,7 +12,7 @@
   data-autoplay-seconds="{{ section.settings.autoplay_seconds }}">
   <div class="hero-slideshow__track" data-hero-track>
     {%- for block in blocks -%}
-      <div class="hero-slideshow__slide" {{ block.shopify_attributes }}>
+      <div class="hero-slideshow__slide" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
         {%- assign slide_image = block.settings.image -%}
         {%- if slide_image != blank -%}
           <img

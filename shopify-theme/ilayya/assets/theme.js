@@ -482,22 +482,47 @@
   };
 
   /* ---------- Hero: swipeable, autoplaying slideshow ---------- */
+  var heroResizeHandler = null; // re-init (theme editor) replaces this instead of stacking listeners
+  var heroInstance = null; // consulted by the shopify:block:* listeners registered once, below
+
   function initHeroSlideshow() {
     var root = qs('[data-hero-slideshow]');
     if (!root) return;
     var track = qs('[data-hero-track]', root);
+    if (!track) return;
+
+    // Safe to call again on DOM this function already set up (e.g. the theme
+    // editor re-firing shopify:section:load without actually swapping this
+    // section's HTML) — clones never carry data-block-id, so drop any from a
+    // previous run before recounting, instead of cloning clones forever.
+    qsa('.hero-slideshow__slide', track).forEach(function (el) {
+      if (!el.hasAttribute('data-block-id')) el.parentNode.removeChild(el);
+    });
+
     var realSlides = qsa('.hero-slideshow__slide', track);
     var dots = qsa('[data-hero-dot]', root);
-    if (!track || realSlides.length < 2) return;
+    if (realSlides.length < 2) return;
 
     var realCount = realSlides.length;
+    var blockIdToIndex = {};
+    realSlides.forEach(function (slide, i) {
+      var id = slide.getAttribute('data-block-id');
+      if (id) blockIdToIndex[id] = i;
+    });
 
     // Clone the first/last slide on either end so autoplay and swipes can
-    // cross the start/end boundary without a visible jump-back.
+    // cross the start/end boundary without a visible jump-back. Strip the
+    // theme-editor markers from the clones — Shopify locates a block by a
+    // unique data-shopify-editor-block per DOM node, and a duplicate would
+    // leave clicking that block in the sidebar targeting the wrong (always
+    // off-screen) copy instead of the real, reachable slide.
     var firstClone = realSlides[0].cloneNode(true);
     var lastClone = realSlides[realCount - 1].cloneNode(true);
-    firstClone.setAttribute('aria-hidden', 'true');
-    lastClone.setAttribute('aria-hidden', 'true');
+    [firstClone, lastClone].forEach(function (clone) {
+      clone.setAttribute('aria-hidden', 'true');
+      clone.removeAttribute('data-shopify-editor-block');
+      clone.removeAttribute('data-block-id');
+    });
     track.appendChild(firstClone);
     track.insertBefore(lastClone, realSlides[0]);
 
@@ -509,6 +534,7 @@
     var dragDeltaX = 0;
     var directionLocked = null; // 'x' | 'y'
     var autoplayTimer = null;
+    var editingBlock = false;
     var autoplaySeconds = parseFloat(root.getAttribute('data-autoplay-seconds')) || 0;
 
     function setTransform(withTransition) {
@@ -546,7 +572,7 @@
     }
     function startAutoplay() {
       stopAutoplay();
-      if (autoplaySeconds > 0) {
+      if (!editingBlock && autoplaySeconds > 0) {
         autoplayTimer = setInterval(function () { goTo(position + 1); }, autoplaySeconds * 1000);
       }
     }
@@ -601,15 +627,52 @@
       startAutoplay();
     });
 
-    window.addEventListener('resize', function () {
+    if (heroResizeHandler) window.removeEventListener('resize', heroResizeHandler);
+    heroResizeHandler = function () {
       slideWidth = root.getBoundingClientRect().width;
       setTransform(false);
-    });
+    };
+    window.addEventListener('resize', heroResizeHandler);
+
+    heroInstance = {
+      root: root,
+      blockIdToIndex: blockIdToIndex,
+      goTo: goTo,
+      stopAutoplay: stopAutoplay,
+      startAutoplay: startAutoplay,
+      setEditing: function (v) { editingBlock = v; }
+    };
 
     setTransform(false);
     updateDots();
     startAutoplay();
   }
+
+  /* Theme editor: jump the carousel to whichever Slide block the merchant
+     selects, and pause autoplay while they're on it. Without this, only the
+     currently-active slide is reachable on canvas — every other Slide block
+     is invisible (and so unclickable/uneditable) behind it. Registered once;
+     each call reads the live heroInstance rather than closing over one, so
+     it keeps working across theme-editor re-renders. */
+  document.addEventListener('shopify:block:select', function (e) {
+    if (!heroInstance || !heroInstance.root.contains(e.target)) return;
+    var blockId = e.target.getAttribute('data-block-id') || (e.detail && e.detail.blockId);
+    var index = heroInstance.blockIdToIndex[blockId];
+    if (index === undefined) return;
+    heroInstance.setEditing(true);
+    heroInstance.stopAutoplay();
+    heroInstance.goTo(index + 1);
+  });
+  document.addEventListener('shopify:block:deselect', function (e) {
+    if (!heroInstance || !heroInstance.root.contains(e.target)) return;
+    heroInstance.setEditing(false);
+    heroInstance.startAutoplay();
+  });
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.target && e.target.querySelector && e.target.querySelector('[data-hero-slideshow]')) {
+      initHeroSlideshow();
+    }
+  });
 
   /* ---------- Cross-sell: fetch native product recommendations ---------- */
   Ilayya.initCrossSell = function () {
