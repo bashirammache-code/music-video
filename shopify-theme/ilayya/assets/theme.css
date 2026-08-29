@@ -299,6 +299,7 @@ p { margin: 0; }
 .brand-story__grid--right { direction: rtl; }
 .brand-story__grid--right > * { direction: ltr; }
 .brand-story__media img, .brand-story__placeholder { width: 100%; aspect-ratio: 4/5; object-fit: cover; background: linear-gradient(135deg, var(--color-border), var(--color-background)); }
+.brand-story__video { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; background: var(--color-border); }
 .brand-story__media--stacked { display: flex; flex-direction: column; gap: 20px; }
 .brand-story__media--stacked img { aspect-ratio: 6/5; }
 .brand-story__content h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: 20px; }

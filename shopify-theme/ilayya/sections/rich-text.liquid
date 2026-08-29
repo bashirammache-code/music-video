@@ -1,6 +1,10 @@
 <div class="brand-story section-padding">
   <div class="container brand-story__grid brand-story__grid--{{ section.settings.image_position }}">
-    {%- if section.settings.image_2 != blank -%}
+    {%- if section.settings.video != blank -%}
+      <div class="brand-story__media">
+        {{ section.settings.video | video_tag: image_size: '900x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, class: 'brand-story__video' }}
+      </div>
+    {%- elsif section.settings.image_2 != blank -%}
       <div class="brand-story__media brand-story__media--stacked">
         <img src="{{ section.settings.image | image_url: width: 900 }}" alt="{{ section.settings.image.alt | escape }}" loading="lazy" width="900" height="{{ 900 | divided_by: section.settings.image.aspect_ratio }}">
         <img src="{{ section.settings.image_2 | image_url: width: 900 }}" alt="{{ section.settings.image_2.alt | escape }}" loading="lazy" width="900" height="{{ 900 | divided_by: section.settings.image_2.aspect_ratio }}">
@@ -29,6 +33,7 @@
 {
   "name": "Brand story",
   "settings": [
+    { "type": "video", "id": "video", "label": "Video (optional)", "info": "Takes over from the image(s) below when set. Upload a short clip — it autoplays muted on loop, no sound or controls." },
     { "type": "image_picker", "id": "image", "label": "Image" },
     { "type": "image_picker", "id": "image_2", "label": "Second image (optional)", "info": "Add a second image to show both stacked on top of each other instead of one large photo." },
     { "type": "select", "id": "image_position", "label": "Image position", "options": [
