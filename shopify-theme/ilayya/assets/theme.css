@@ -11,6 +11,7 @@
   --color-accent-deep: #6E0808;
   --color-surface: #F6F4F1;
   --color-border: #E6DFD6;
+  --color-frame: #EEE9E1;
   --button-radius: 0px;
 
   --font-heading: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -249,20 +250,21 @@ p { margin: 0; }
 @media (max-width: 900px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; } }
 
 .product-card__media {
-  position: relative; display: block; aspect-ratio: 4/5; overflow: hidden;
-  background: var(--color-surface); border: 1px solid var(--color-border);
+  position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; border-radius: 14px;
+  background: var(--color-frame);
 }
-.product-card__img { width: 100%; height: 100%; object-fit: contain; transition: opacity .35s ease; }
+.product-card__img { width: 100%; height: 100%; object-fit: contain; padding: 6%; box-sizing: border-box; transition: opacity .35s ease; }
 .product-card__img--hover { position: absolute; inset: 0; opacity: 0; }
 @media (hover: hover) {
   .product-card__media:hover .product-card__img--main { opacity: 0; }
   .product-card__media:hover .product-card__img--hover { opacity: 1; }
 }
-.product-card__placeholder, .product__placeholder { width: 100%; height: 100%; background: var(--color-border); display: flex; align-items: center; justify-content: center; }
+.product-card__placeholder, .product__placeholder { width: 100%; height: 100%; background: var(--color-frame); display: flex; align-items: center; justify-content: center; }
 .placeholder-svg { width: 40%; opacity: .5; }
 .product-card__badge {
   position: absolute; top: 12px; left: 12px; background: var(--color-accent); color: var(--color-background);
-  font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; z-index: 2;
+  font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px;
+  border-radius: 999px; z-index: 2;
 }
 .product-card__info { padding-top: 14px; text-align: left; }
 .product-card__title { font-size: .94rem; font-weight: 600; margin-bottom: 4px; font-family: var(--font-body); color: var(--color-text); }
