@@ -9,10 +9,49 @@
         "subheading": "New arrivals, early access, and quiet luxury — straight to your inbox."
       }
     },
+    "trust-badges": {
+      "type": "trust-badges",
+      "settings": {},
+      "blocks": {
+        "shipping": {
+          "type": "badge",
+          "settings": {
+            "icon": "truck",
+            "heading": "Fast Shipping Across Lebanon",
+            "text": "Dispatched next day and delivered within 1-3 days, with tracking every step of the way."
+          }
+        },
+        "returns": {
+          "type": "badge",
+          "settings": {
+            "icon": "coins",
+            "heading": "14-Day Money-Back Guarantee",
+            "text": "Not completely satisfied? Return your order within 14 days for a full refund, if unused."
+          }
+        },
+        "material": {
+          "type": "badge",
+          "settings": {
+            "icon": "info-circle",
+            "heading": "316L Premium Stainless Steel",
+            "text": "Crafted from high grade 316L steel for lasting durability and everyday wear."
+          }
+        },
+        "resistant": {
+          "type": "badge",
+          "settings": {
+            "icon": "water-drop",
+            "heading": "Water & Tarnish Resistant",
+            "text": "Designed to handle daily life while maintaining its shine and finish."
+          }
+        }
+      },
+      "block_order": ["shipping", "returns", "material", "resistant"]
+    },
     "footer": {
       "type": "footer",
       "settings": {}
     }
   },
-  "order": ["newsletter", "footer"]
+  "order": ["newsletter", "trust-badges", "footer"]
 }

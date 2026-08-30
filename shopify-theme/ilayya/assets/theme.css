@@ -310,6 +310,18 @@ p { margin: 0; }
 .brand-story__text { margin-bottom: 28px; opacity: .85; }
 @media (max-width: 900px) { .brand-story__grid { grid-template-columns: 1fr; gap: 32px; } .brand-story__grid--right { direction: ltr; } }
 
+/* ---------- Trust badges (shipping / returns / material row) ---------- */
+.trust-badges { background: var(--color-surface); }
+.trust-badges__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+.trust-badges__item { text-align: center; }
+.trust-badges__icon {
+  display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--color-accent);
+}
+.trust-badges__icon svg { width: 32px; height: 32px; }
+.trust-badges__title { font-size: 1.05rem; margin-bottom: 8px; }
+.trust-badges__text { font-size: .85rem; opacity: .75; line-height: 1.6; max-width: 26ch; margin: 0 auto; }
+@media (max-width: 900px) { .trust-badges__row { grid-template-columns: repeat(2, 1fr); gap: 32px 20px; } }
+
 /* ---------- Category icons row ---------- */
 .category-icons__row { display: flex; justify-content: center; flex-wrap: wrap; gap: 56px; }
 .category-icons__item { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--color-text); }
