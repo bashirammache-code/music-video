@@ -6,11 +6,16 @@
     <div class="category-grid">
       {%- for block in section.blocks -%}
         <a href="{{ block.settings.collection.url | default: '#' }}" class="category-tile" {{ block.shopify_attributes }}>
-          {%- if block.settings.image != blank -%}
-            <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.label }}" loading="lazy" width="800" height="{{ 800 | divided_by: block.settings.image.aspect_ratio }}">
-          {%- else -%}
-            <div class="category-tile__placeholder"></div>
-          {%- endif -%}
+          <div class="category-tile__media">
+            {%- if block.settings.image != blank -%}
+              <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.label }}" loading="lazy" width="800" height="{{ 800 | divided_by: block.settings.image.aspect_ratio }}">
+            {%- elsif forloop.index == 1 -%}
+              {%- comment -%} Falls back to a real product shot until a dedicated Earrings category image is uploaded to this block. {%- endcomment -%}
+              <img src="{{ 'category-earrings-knot.png' | asset_url }}" alt="">
+            {%- else -%}
+              <div class="category-tile__placeholder"></div>
+            {%- endif -%}
+          </div>
           <span class="category-tile__label">{{ block.settings.label }}</span>
         </a>
       {%- endfor -%}
