@@ -12,6 +12,7 @@
     "split-promo": {
       "type": "rich-text",
       "settings": {
+        "video": "gid://shopify/Video/52857534054681",
         "image_position": "right",
         "eyebrow": "Gold Edit",
         "heading": "Gold For Every Occasion",
