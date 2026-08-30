@@ -21,7 +21,13 @@
             previewed on the draft theme. Replace with a real ILAYYA photo
             (via the Image setting above) before going live.
           {%- endcomment -%}
-          <img src="{{ 'our-story-preview.jpg' | asset_url }}" alt="" loading="lazy" width="734" height="1190">
+          {%- comment -%}
+            No width/height attributes on purpose: this asset's native ratio
+            (734x1190) doesn't match the 4/5 box the CSS crops it into, and
+            declaring mismatched attributes made the browser lay it out at
+            its full native height instead of the intended cropped box.
+          {%- endcomment -%}
+          <img src="{{ 'our-story-preview.jpg' | asset_url }}" alt="" loading="lazy">
         {%- endif -%}
       </div>
     {%- endif -%}
