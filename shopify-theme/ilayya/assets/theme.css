@@ -279,6 +279,20 @@ p { margin: 0; }
 }
 @media (max-width: 900px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; } }
 
+/* New Arrivals only: same full-bleed / hairline-gap / square-corner treatment
+   as the Shop by Category row. Scoped to .product-grid--bleed so the actual
+   collection and search-results grids (which reuse .product-grid) keep
+   their normal gutters and rounded corners. */
+.product-grid-bleed {
+  width: 100vw; position: relative; left: 50%; right: 50%;
+  margin-left: -50vw; margin-right: -50vw;
+}
+.product-grid--bleed {
+  gap: 2px; max-width: 1480px; margin: 0 auto;
+}
+@media (max-width: 900px) { .product-grid--bleed { gap: 2px; } }
+.product-grid--bleed .product-card__media { border-radius: 0; }
+
 .product-card__media {
   position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; border-radius: 3px;
   background: var(--color-frame);

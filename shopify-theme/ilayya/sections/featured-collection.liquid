@@ -7,8 +7,16 @@
         <a href="{{ section.settings.view_all_url }}" class="section-heading__link">View all {%- render 'icon' with 'arrow' -%}</a>
       {%- endif -%}
     </div>
+  </div>
 
-    <div class="product-grid" style="--columns: {{ section.settings.columns }};">
+  {%- comment -%}
+    Same full-bleed, hairline-gap, square-corner treatment as the Shop by
+    Category row below it — breaks out of .container on purpose. Scoped to
+    this section only (product-grid--bleed) so the actual collection and
+    search pages, which reuse .product-grid too, are unaffected.
+  {%- endcomment -%}
+  <div class="product-grid-bleed">
+    <div class="product-grid product-grid--bleed" style="--columns: {{ section.settings.columns }};">
       {%- assign collection = section.settings.collection -%}
       {%- if collection != blank and collection.products.size > 0 -%}
         {%- for product in collection.products limit: section.settings.products_to_show -%}
