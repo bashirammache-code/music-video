@@ -2,78 +2,149 @@
   "sections": {
     "hero": {
       "type": "hero",
-      "settings": {},
       "blocks": {
-        "slide-1": { "type": "slide", "settings": {} },
-        "slide-2": { "type": "slide", "settings": {} }
+        "slide-1": {
+          "type": "slide",
+          "settings": {}
+        },
+        "slide-2": {
+          "type": "slide",
+          "settings": {}
+        }
       },
-      "block_order": ["slide-1", "slide-2"]
+      "block_order": [
+        "slide-1",
+        "slide-2"
+      ],
+      "settings": {
+        "height": 680,
+        "autoplay_seconds": 5,
+        "alignment": "left",
+        "eyebrow": "The New Collection",
+        "heading": "Quietly bold, made to last",
+        "subheading": "Demi-fine jewelry designed for everyday wear, gold-plated stainless steel finished by hand.",
+        "button_label": "Shop New Arrivals",
+        "button_url": ""
+      }
     },
     "split-promo": {
       "type": "rich-text",
       "settings": {
-        "video": "gid://shopify/Video/52857534054681",
+        "video": "shopify://files/videos/From Klickpin.com- 67 Stunning Plus Size Fashion Ideas-pin-id-1072138255064164504.mov",
         "image_position": "right",
-        "eyebrow": "Gold Edit",
-        "heading": "Gold For Every Occasion",
-        "text": "<p>From the brunch you didn't plan to the birthday you did — gold that goes with everything, and nothing you have to save for later. Gold-plated stainless steel, finished by hand, made to keep shining, all day.</p>",
+        "eyebrow": "Gold Daily",
+        "heading": "Ilayya On Repeat",
+        "text": "<p>The brunch you didn't plan for. The birthday you did. Ilayya gold goes with both, and everything in between. Gold-plated stainless steel, finished by hand, made to keep shining all day.</p>",
         "button_label": "Shop Gold",
         "button_url": ""
       }
     },
     "category-icons": {
       "type": "category-icons",
-      "settings": {},
       "blocks": {
         "earrings": {
           "type": "category",
-          "settings": { "icon": "category-earrings", "label": "Earrings", "collection": "gid://shopify/Collection/516795629849" }
+          "settings": {
+            "icon": "category-earrings",
+            "label": "Earrings",
+            "collection": "gid://shopify/Collection/516795629849"
+          }
         },
         "necklaces": {
           "type": "category",
-          "settings": { "icon": "category-necklace", "label": "Necklaces", "collection": "gid://shopify/Collection/516795695385" }
+          "settings": {
+            "icon": "category-necklace",
+            "label": "Necklaces",
+            "collection": "gid://shopify/Collection/516795695385"
+          }
         },
         "bracelets": {
           "type": "category",
-          "settings": { "icon": "category-bracelet", "label": "Bracelets", "collection": "gid://shopify/Collection/516795662617" }
+          "settings": {
+            "icon": "category-bracelet",
+            "label": "Bracelets",
+            "collection": "gid://shopify/Collection/516795662617"
+          }
         }
       },
-      "block_order": ["earrings", "necklaces", "bracelets"]
+      "block_order": [
+        "earrings",
+        "necklaces",
+        "bracelets"
+      ],
+      "settings": {}
     },
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
+        "eyebrow": "Best Sellers",
+        "heading": "New Arrivals",
         "collection": "gid://shopify/Collection/516795695385",
-        "products_to_show": 4
+        "products_to_show": 4,
+        "columns": "4",
+        "alignment": "left",
+        "view_all_url": ""
       }
     },
     "collection-list": {
       "type": "collection-list",
-      "settings": {},
       "blocks": {
         "earrings": {
           "type": "category",
-          "settings": { "label": "Earrings", "collection": "gid://shopify/Collection/516795629849" }
+          "settings": {
+            "label": "Earrings",
+            "collection": "gid://shopify/Collection/516795629849"
+          }
         },
         "bracelets": {
           "type": "category",
-          "settings": { "label": "Bracelets", "collection": "gid://shopify/Collection/516795662617" }
+          "settings": {
+            "label": "Bracelets",
+            "collection": "gid://shopify/Collection/516795662617"
+          }
         },
         "necklaces": {
           "type": "category",
-          "settings": { "label": "Necklaces", "collection": "gid://shopify/Collection/516795695385" }
+          "settings": {
+            "label": "Necklaces",
+            "collection": "gid://shopify/Collection/516795695385"
+          }
         }
       },
-      "block_order": ["earrings", "bracelets", "necklaces"]
+      "block_order": [
+        "earrings",
+        "bracelets",
+        "necklaces"
+      ],
+      "settings": {
+        "heading": "Shop by Category"
+      }
     },
     "rich-text": {
       "type": "rich-text",
-      "settings": {}
+      "settings": {
+        "image_position": "left",
+        "eyebrow": "Our Story",
+        "heading": "Ilayya Means To Me",
+        "text": "<p>In Arabic, ilayya means &lsquo;to me.&rsquo; We&rsquo;ve always read it the other way too, as a dedication, to you. That&rsquo;s the idea behind everything we make. We believe luxury should feel empowering, not exclusive: the kind of quality you reach for on an ordinary Tuesday, not just the days that call for it. We draw from silhouettes that have never gone out of style and rework them through a modern eye, chic, considered, and built to outlast a trend rather than chase one. Every piece is made to be worn daily, not saved for occasions, because that is what quality and timeless beauty mean to us. Ilayya isn&rsquo;t jewelry you save for later. It&rsquo;s made for right now. It&rsquo;s made for you.</p>",
+        "button_label": "Our Story",
+        "button_url": ""
+      }
     },
     "testimonials": {
       "type": "testimonials",
-      "settings": {}
+      "settings": {
+        "heading": "Loved, daily"
+      }
     }
   },
-  "order": ["hero", "split-promo", "category-icons", "featured-collection", "collection-list", "rich-text", "testimonials"]
+  "order": [
+    "hero",
+    "split-promo",
+    "category-icons",
+    "featured-collection",
+    "collection-list",
+    "rich-text",
+    "testimonials"
+  ]
 }
