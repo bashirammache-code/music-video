@@ -1,7 +1,7 @@
 /* =========================================================
    ILAYYA — theme stylesheet
    Minimal, modern fine-jewelry aesthetic.
-   Nunito is the only font across the entire site.
+   Fraunces for headings, Nunito for body and UI text.
    ========================================================= */
 
 :root {
@@ -14,7 +14,7 @@
   --color-frame: #EEE9E1;
   --button-radius: 0px;
 
-  --font-heading: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --container-width: 1240px;
@@ -38,7 +38,7 @@ a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; background: none; border: none; color: inherit; }
 input, select { font-family: inherit; font-size: 1rem; }
 ul { list-style: none; margin: 0; padding: 0; }
-h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; letter-spacing: -0.01em; margin: 0; color: var(--color-accent); }
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--color-accent); }
 p { margin: 0; }
 
 .visually-hidden {
