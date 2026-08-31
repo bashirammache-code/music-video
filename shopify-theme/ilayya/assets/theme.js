@@ -45,6 +45,25 @@
     });
   }
 
+  /* ---------- Overlay header: transparent over the hero, solid once scrolled ---------- */
+  function initOverlayHeader() {
+    var chrome = qs('.site-chrome--overlay');
+    if (!chrome) return;
+    var threshold = 60;
+    var ticking = false;
+    function update() {
+      chrome.classList.toggle('is-scrolled', window.scrollY > threshold);
+      ticking = false;
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
   /* ---------- Announcement bar: rotate between message blocks ---------- */
   function initAnnouncementBar() {
     var bar = qs('#AnnouncementBar');
@@ -702,6 +721,7 @@
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
+    initOverlayHeader();
     initAnnouncementBar();
     initHeroSlideshow();
     initSearchDrawer();

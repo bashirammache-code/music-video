@@ -45,7 +45,9 @@
 
   <a class="skip-to-content" href="#MainContent">Skip to content</a>
 
-  {% sections 'header-group' %}
+  <div id="SiteChrome" class="site-chrome{% if template == 'index' %} site-chrome--overlay{% endif %}">
+    {% sections 'header-group' %}
+  </div>
 
   <main id="MainContent" role="main">
     {{ content_for_layout }}

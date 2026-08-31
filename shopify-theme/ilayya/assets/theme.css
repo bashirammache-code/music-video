@@ -98,6 +98,32 @@ p { margin: 0; }
 .site-header__menu-toggle { grid-column: 1; display: none; flex-direction: column; gap: 5px; width: 22px; }
 .site-header__menu-toggle span { display: block; height: 1px; background: var(--color-text); }
 
+/* ---------- Overlay header (homepage only): transparent over the hero video/photo,
+   solid once the page scrolls past it. Toggled via .is-scrolled by theme.js. ---------- */
+.site-chrome--overlay {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+}
+.site-chrome--overlay .site-header {
+  background: transparent; border-bottom-color: transparent;
+  transition: background .3s ease, border-color .3s ease;
+}
+.site-chrome--overlay:not(.is-scrolled) .site-header__logo img {
+  filter: brightness(0) invert(1); /* recolors the maroon wordmark to white without a second asset */
+}
+.site-chrome--overlay:not(.is-scrolled) .site-nav a,
+.site-chrome--overlay:not(.is-scrolled) .icon-btn,
+.site-chrome--overlay:not(.is-scrolled) .site-header__menu-toggle {
+  color: var(--color-background);
+}
+.site-chrome--overlay:not(.is-scrolled) .site-header__menu-toggle span,
+.site-chrome--overlay:not(.is-scrolled) .site-nav a::after {
+  background: var(--color-background);
+}
+.site-chrome--overlay.is-scrolled .site-header {
+  background: var(--color-background); border-bottom-color: var(--color-border);
+  box-shadow: 0 2px 16px rgba(36,31,29,.06);
+}
+
 .cart-toggle { position: relative; }
 .cart-count {
   position: absolute; top: -8px; right: -10px; background: var(--color-accent);
