@@ -64,35 +64,6 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  /* ---------- Hero shrink: contracts + rounds corners as it scrolls past ---------- */
-  function initHeroShrink() {
-    var wrap = qs('[data-hero-pin-wrap]');
-    var hero = wrap ? qs('.hero-slideshow', wrap) : null;
-    if (!wrap || !hero) return;
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var maxShrink = 0.08; // scales down to 92% at full progress
-    var maxRadius = 28; // px, at full progress
-    var ticking = false;
-
-    function update() {
-      var wrapRect = wrap.getBoundingClientRect();
-      var buffer = wrapRect.height - hero.getBoundingClientRect().height;
-      var progress = buffer > 0 ? Math.min(1, Math.max(0, -wrapRect.top / buffer)) : 0;
-      hero.style.transform = 'scale(' + (1 - progress * maxShrink) + ')';
-      hero.style.borderRadius = (progress * maxRadius) + 'px';
-      ticking = false;
-    }
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(update);
-    }
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-  }
-
   /* ---------- Announcement bar: rotate between message blocks ---------- */
   function initAnnouncementBar() {
     var bar = qs('#AnnouncementBar');
@@ -751,7 +722,6 @@
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
     initOverlayHeader();
-    initHeroShrink();
     initAnnouncementBar();
     initHeroSlideshow();
     initSearchDrawer();

@@ -110,13 +110,16 @@ p { margin: 0; }
 .site-chrome--overlay:not(.is-scrolled) .site-header__logo img {
   filter: brightness(0) invert(1); /* recolors the maroon wordmark to white without a second asset */
 }
-.site-chrome--overlay:not(.is-scrolled) .site-nav a,
+/* Only the top-level nav links (Home / Jewelry / About / Contact) go white —
+   never the dropdown's own links, which sit on the dropdown panel's solid
+   cream background and would otherwise render as white-on-white. */
+.site-chrome--overlay:not(.is-scrolled) .site-nav > ul > li > a,
 .site-chrome--overlay:not(.is-scrolled) .icon-btn,
 .site-chrome--overlay:not(.is-scrolled) .site-header__menu-toggle {
   color: var(--color-background);
 }
 .site-chrome--overlay:not(.is-scrolled) .site-header__menu-toggle span,
-.site-chrome--overlay:not(.is-scrolled) .site-nav a::after {
+.site-chrome--overlay:not(.is-scrolled) .site-nav > ul > li > a::after {
   background: var(--color-background);
 }
 .site-chrome--overlay.is-scrolled .site-header {
@@ -213,16 +216,7 @@ p { margin: 0; }
    screens don't force an extreme letterbox crop of the (portrait-oriented)
    slide photos — a fixed px height alone cuts further into the face the
    wider the screen gets, since the image scales to fill width first. */
-/* Contracts and gains rounded corners as the page scrolls past it (see
-   initHeroShrink in theme.js); the extra scroll room lives in .hero-pin-wrap's
-   padding-bottom so the shrink has somewhere to happen before the next
-   section arrives. */
-.hero-pin-wrap { position: relative; padding-bottom: 22vh; }
-.hero-slideshow {
-  position: sticky; top: 0; height: max(var(--hero-height, 640px), 48vw); overflow: hidden;
-  will-change: transform, border-radius;
-}
-@media (max-width: 749px) { .hero-pin-wrap { padding-bottom: 12vh; } }
+.hero-slideshow { position: relative; height: max(var(--hero-height, 640px), 48vw); overflow: hidden; }
 .hero-slideshow__track { display: flex; width: 100%; height: 100%; will-change: transform; touch-action: pan-y; }
 .hero-slideshow__slide { position: relative; flex: 0 0 100%; width: 100%; height: 100%; overflow: hidden; }
 .hero__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
