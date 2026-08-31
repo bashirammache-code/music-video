@@ -18,7 +18,7 @@
   --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --container-width: 1240px;
-  --header-height: 68px;
+  --header-height: 56px;
 }
 
 /* ---------- Reset ---------- */
@@ -77,10 +77,10 @@ p { margin: 0; }
 .icon-btn svg { width: 20px; height: 20px; }
 
 /* ---------- Announcement bar (rotating promo messages) ---------- */
-.announcement-bar { position: relative; background: var(--color-accent); color: var(--color-background); min-height: 38px; }
+.announcement-bar { position: relative; background: var(--color-accent); color: var(--color-background); min-height: 32px; }
 .announcement-bar__message {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  text-align: center; font-size: .76rem; font-weight: 700; letter-spacing: .08em; padding: 10px 16px;
+  text-align: center; font-size: .76rem; font-weight: 700; letter-spacing: .08em; padding: 7px 16px;
   text-transform: uppercase; opacity: 0; transition: opacity .5s ease;
 }
 .announcement-bar__message.is-active { position: relative; opacity: 1; }
@@ -93,7 +93,7 @@ p { margin: 0; }
   height: var(--header-height);
 }
 .site-header__logo { grid-column: 2; justify-self: center; display: inline-flex; }
-.site-header__logo img { height: 56px; width: auto; }
+.site-header__logo img { height: 42px; width: auto; }
 .site-header__icons { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 20px; }
 .site-header__menu-toggle { grid-column: 1; display: none; flex-direction: column; gap: 5px; width: 22px; }
 .site-header__menu-toggle span { display: block; height: 1px; background: var(--color-text); }
@@ -107,14 +107,14 @@ p { margin: 0; }
 .cart-count[data-zero] { display: none; }
 
 /* ---------- Primary nav (centered row below the logo, with dropdowns) ---------- */
-.site-nav { display: flex; justify-content: center; padding-bottom: 10px; }
+.site-nav { display: flex; justify-content: center; padding-bottom: 6px; }
 .site-nav > ul { display: flex; align-items: center; margin: 0; padding: 0; }
 .site-nav__item { display: flex; align-items: center; position: relative; }
 .site-nav__dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-accent); opacity: .5; margin: 0 22px; flex-shrink: 0; }
 .site-nav a {
   position: relative; display: inline-flex; align-items: center; gap: 6px;
   font-family: var(--font-body); font-weight: 400; color: var(--color-text);
-  font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; padding: 4px 2px;
+  font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; padding: 3px 2px;
 }
 .site-nav a::after {
   content: ''; position: absolute; left: 2px; right: 2px; bottom: 0;
