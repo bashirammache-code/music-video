@@ -305,11 +305,9 @@ p { margin: 0; }
 .brand-story__grid--right { direction: rtl; }
 .brand-story__grid--right > * { direction: ltr; }
 .brand-story__media img, .brand-story__placeholder { width: 100%; aspect-ratio: 4/5; object-fit: cover; background: linear-gradient(135deg, var(--color-border), var(--color-background)); }
-/* Portrait video (e.g. 9:16 phone-shot clip) — sized to its own aspect ratio
-   instead of the 4/5 photo box, and capped so a tall clip doesn't blow out
-   the section height; centered within its grid column. */
-.brand-story__video { width: 100%; max-width: 420px; aspect-ratio: 9/16; object-fit: cover; display: block; margin: 0 auto; background: var(--color-border); }
-@media (max-width: 900px) { .brand-story__video { max-width: 320px; } }
+/* Video gets its own aspect ratio instead of the 4/5 photo box, so it
+   doesn't inherit the tall portrait crop meant for photography. */
+.brand-story__video { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--color-border); }
 .brand-story__media--stacked { display: flex; flex-direction: column; gap: 20px; }
 .brand-story__media--stacked img { aspect-ratio: 6/5; }
 .brand-story__content h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: 20px; }
