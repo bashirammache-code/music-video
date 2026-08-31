@@ -3,6 +3,14 @@
     <div class="section-heading section-heading--center">
       <h2 class="section-heading__title">{{ section.settings.heading }}</h2>
     </div>
+  </div>
+  {%- comment -%}
+    The grid itself breaks out of .container to run edge-to-edge (full
+    viewport width), with only a hairline gap between tiles — matching a
+    reference of Prada's category row rather than the boxed/gapped grid
+    this theme used before.
+  {%- endcomment -%}
+  <div class="category-grid-bleed">
     <div class="category-grid">
       {%- for block in section.blocks -%}
         <a href="{{ block.settings.collection.url | default: '#' }}" class="category-tile" {{ block.shopify_attributes }}>
