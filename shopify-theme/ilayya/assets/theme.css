@@ -424,7 +424,7 @@ p { margin: 0; }
 
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--color-border); padding-top: 56px; }
-.site-footer__grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; }
+.site-footer__grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.3fr; gap: 40px; padding-bottom: 40px; }
 .footer-logo { height: 60px; width: auto; margin-bottom: 4px; }
 .site-footer__brand p { opacity: .75; margin: 14px 0 18px; max-width: 340px; font-size: .92rem; }
 .site-footer__social { display: flex; gap: 16px; }
@@ -433,11 +433,40 @@ p { margin: 0; }
 .site-footer__col ul li { margin-bottom: 10px; }
 .site-footer__col a { font-size: .9rem; opacity: .8; }
 .site-footer__col a:hover { opacity: 1; }
+
+/* Footer newsletter / "Get 10% Off" signup column */
+.site-footer__signup p { font-size: .88rem; opacity: .75; margin-bottom: 18px; line-height: 1.5; }
+.footer-signup-form__field {
+  display: flex; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;
+}
+.footer-signup-form__field input {
+  flex: 1; background: transparent; border: none; outline: none; font-size: .92rem; padding: 4px 0; color: var(--color-text);
+}
+.footer-signup-form__field input::placeholder { color: var(--color-text); opacity: .5; }
+.footer-signup-form__field button { color: var(--color-accent); flex-shrink: 0; }
+.footer-signup-form__field button svg { width: 18px; height: 18px; }
+.footer-signup-form__success { margin-top: 12px; font-size: .8rem; color: var(--color-accent); }
+
+/* Accepted payment methods — pulled live from Settings > Payments, so this
+   always matches whatever the merchant actually has enabled. */
+.site-footer__payments {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 24px; border-top: 1px solid var(--color-border);
+}
+.site-footer__payment-icon { height: 24px; width: auto; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-background); }
+
 .site-footer__bottom {
-  display: flex; justify-content: space-between; padding: 20px 24px; border-top: 1px solid var(--color-border);
+  display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-top: 1px solid var(--color-border);
   font-size: .78rem; opacity: .6; flex-wrap: wrap; gap: 8px;
 }
-@media (max-width: 749px) { .site-footer__grid { grid-template-columns: 1fr; gap: 32px; } }
+/* Language switcher — only appears once a second language is added under
+   Settings > Languages in Shopify Admin. */
+.footer-language-form select {
+  background: transparent; border: 1px solid var(--color-border); border-radius: 3px; padding: 5px 10px;
+  font-size: .78rem; color: var(--color-text); opacity: 1; cursor: pointer; text-transform: uppercase; letter-spacing: .04em;
+}
+
+@media (max-width: 900px) { .site-footer__grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; } }
+@media (max-width: 560px) { .site-footer__grid { grid-template-columns: 1fr; gap: 32px; } }
 
 /* ---------- Cart drawer ---------- */
 .cart-drawer[hidden] { display: none; }

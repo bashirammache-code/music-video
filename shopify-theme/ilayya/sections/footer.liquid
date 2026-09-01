@@ -25,11 +25,51 @@
       </div>
     {%- endfor -%}
 
+    <div class="site-footer__col site-footer__signup">
+      <h3>{{ section.settings.signup_heading }}</h3>
+      {%- if section.settings.signup_text != blank -%}<p>{{ section.settings.signup_text }}</p>{%- endif -%}
+      {%- form 'customer', id: 'FooterNewsletterForm', class: 'footer-signup-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="footer-signup-form__field">
+          <input type="email" name="contact[email]" placeholder="Enter your email" required aria-label="Email address" value="{% if customer %}{{ customer.email }}{% endif %}">
+          <button type="submit" aria-label="Subscribe">{%- render 'icon' with 'arrow' -%}</button>
+        </div>
+        {%- if form.posted_successfully? -%}
+          <p class="footer-signup-form__success">Thank you — check your inbox for your code.</p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+
   </div>
+
+  {%- comment -%}
+    Renders whichever payment icons the merchant has actually enabled under
+    Settings > Payments in Shopify Admin — always accurate, no hardcoded logos.
+  {%- endcomment -%}
+  {%- assign payment_types = shop.enabled_payment_types -%}
+  {%- if payment_types.size > 0 -%}
+    <div class="container site-footer__payments">
+      {%- for type in payment_types -%}
+        {{ type | payment_type_svg_tag: class: 'site-footer__payment-icon' }}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
 
   <div class="container site-footer__bottom">
     <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
-    <p class="site-footer__payment">Secure checkout powered by Shopify</p>
+    {%- comment -%}
+      Only renders once a second language is actually added under Settings >
+      Languages in Shopify Admin — invisible (and harmless) until then.
+    {%- endcomment -%}
+    {%- if localization.available_languages.size > 1 -%}
+      {%- form 'localization', id: 'FooterLanguageForm', class: 'footer-language-form' -%}
+        <select name="locale_code" onchange="this.form.submit()" aria-label="Language">
+          {%- for language in localization.available_languages -%}
+            <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>{{ language.endonym_name | capitalize }}</option>
+          {%- endfor -%}
+        </select>
+      {%- endform -%}
+    {%- endif -%}
   </div>
 </footer>
 
@@ -39,22 +79,25 @@
   "settings": [
     { "type": "textarea", "id": "brand_text", "label": "Brand text", "default": "Demi-fine jewelry, made to last. Designed in small batches, worn every day." },
     { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
-    { "type": "url", "id": "pinterest_url", "label": "Pinterest URL" }
+    { "type": "url", "id": "pinterest_url", "label": "Pinterest URL" },
+    { "type": "header", "content": "Newsletter signup column" },
+    { "type": "text", "id": "signup_heading", "label": "Heading", "default": "Get 10% Off" },
+    { "type": "textarea", "id": "signup_text", "label": "Text", "default": "Sign up for early access to new drops and 10% off your first order." }
   ],
   "blocks": [
     {
       "type": "menu",
       "name": "Menu column",
       "settings": [
-        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Help and Support" },
         { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
       ]
     }
   ],
   "default": {
     "blocks": [
-      { "type": "menu", "settings": { "heading": "Shop" } },
-      { "type": "menu", "settings": { "heading": "Help" } }
+      { "type": "menu", "settings": { "heading": "Help and Support" } },
+      { "type": "menu", "settings": { "heading": "About Us" } }
     ]
   }
 }
