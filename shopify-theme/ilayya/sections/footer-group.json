@@ -53,5 +53,5 @@
       "settings": {}
     }
   },
-  "order": ["newsletter", "trust-badges", "footer"]
+  "order": ["trust-badges", "newsletter", "footer"]
 }

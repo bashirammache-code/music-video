@@ -426,7 +426,7 @@ p { margin: 0; }
 
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--color-border); padding-top: 56px; }
-.site-footer__grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.3fr; gap: 40px; padding-bottom: 40px; }
+.site-footer__grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 40px; padding-bottom: 40px; }
 .footer-logo { height: 60px; width: auto; margin-bottom: 4px; }
 .site-footer__brand p { opacity: .75; margin: 14px 0 18px; max-width: 340px; font-size: .92rem; }
 .site-footer__social { display: flex; gap: 16px; }
@@ -447,19 +447,6 @@ p { margin: 0; }
 .site-footer__col ul li { margin-bottom: 10px; }
 .site-footer__col a { font-size: .9rem; opacity: .8; }
 .site-footer__col a:hover { opacity: 1; }
-
-/* Footer newsletter / "Get 10% Off" signup column */
-.site-footer__signup p { font-size: .88rem; opacity: .75; margin-bottom: 18px; line-height: 1.5; }
-.footer-signup-form__field {
-  display: flex; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;
-}
-.footer-signup-form__field input {
-  flex: 1; background: transparent; border: none; outline: none; font-size: .92rem; padding: 4px 0; color: var(--color-text);
-}
-.footer-signup-form__field input::placeholder { color: var(--color-text); opacity: .5; }
-.footer-signup-form__field button { color: var(--color-accent); flex-shrink: 0; }
-.footer-signup-form__field button svg { width: 18px; height: 18px; }
-.footer-signup-form__success { margin-top: 12px; font-size: .8rem; color: var(--color-accent); }
 
 /* Accepted payment methods — pulled live from Settings > Payments, so this
    always matches whatever the merchant actually has enabled. */
@@ -634,8 +621,8 @@ p { margin: 0; }
 
 /* ---------- Promo tab: fixed "Get 10% Off" tab, right edge, all pages ----------
    Anchored to the bottom of the viewport (not vertically centered) so it never
-   drifts up next to the newsletter band or the footer's own "Get 10% Off"
-   column while scrolling — those already carry the same message. */
+   drifts up next to the newsletter band while scrolling — that already
+   carries the same message. */
 .promo-tab {
   position: fixed; bottom: 28px; right: 0; z-index: 130;
 }
