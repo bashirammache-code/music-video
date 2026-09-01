@@ -292,6 +292,37 @@
         try { window.localStorage.setItem(STORAGE_KEY, '1'); } catch (err) { /* private browsing: ignore */ }
       }, justPosted ? 0 : 2500);
     }
+
+    Ilayya.openSignupModal = open;
+  }
+
+  /* ---------- Promo tab: fixed "Get 10% Off" tab on the right edge, visible
+     on every page while scrolling. Clicking it opens the same signup modal
+     as the delayed pop-up above; the small close button just dismisses the
+     tab itself (for this browsing session) without touching that modal. ---------- */
+  function initPromoTab() {
+    var tab = qs('#PromoTab');
+    if (!tab) return;
+    var trigger = qs('#PromoTabTrigger');
+    var closeBtn = qs('#PromoTabClose');
+    var STORAGE_KEY = 'ilayya_promo_tab_dismissed';
+
+    var dismissed = false;
+    try { dismissed = window.sessionStorage.getItem(STORAGE_KEY) === '1'; } catch (err) { dismissed = false; }
+    if (dismissed) { tab.setAttribute('hidden', ''); return; }
+
+    if (trigger) {
+      trigger.addEventListener('click', function () {
+        if (typeof Ilayya.openSignupModal === 'function') Ilayya.openSignupModal();
+      });
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        tab.setAttribute('hidden', '');
+        try { window.sessionStorage.setItem(STORAGE_KEY, '1'); } catch (err) { /* private browsing: ignore */ }
+      });
+    }
   }
 
   /* ---------- Quick-add "+": AJAX add straight from a product card ---------- */
@@ -728,6 +759,7 @@
     initCartDrawer();
     initAddedModal();
     initSignupPopup();
+    initPromoTab();
     initQuickAdd();
     initProductForms();
     initQuantitySteppers();

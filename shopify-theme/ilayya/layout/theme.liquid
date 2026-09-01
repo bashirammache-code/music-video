@@ -59,6 +59,14 @@
   {% render 'added-to-cart-modal' %}
   {%- if settings.signup_popup_enabled -%}
     {% render 'signup-popup' %}
+    {%- comment -%}
+      Fixed vertical tab on every page, visible while scrolling. Clicking it
+      opens the same signup modal above rather than duplicating that flow.
+    {%- endcomment -%}
+    <div class="promo-tab" id="PromoTab">
+      <button type="button" class="promo-tab__close" id="PromoTabClose" aria-label="Dismiss">{%- render 'icon' with 'close' -%}</button>
+      <button type="button" class="promo-tab__trigger" id="PromoTabTrigger">Get 10% Off</button>
+    </div>
   {%- endif -%}
 
   {{ 'theme.js' | asset_url | script_tag }}
