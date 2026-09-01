@@ -2,8 +2,6 @@
   <div class="container site-footer__grid">
 
     <div class="site-footer__brand">
-      <img class="footer-logo" src="{{ 'logo-full-lockup.png' | asset_url }}" alt="{{ shop.name }}" width="150" loading="lazy">
-      <p>{{ section.settings.brand_text }}</p>
       <div class="site-footer__social">
         {%- if section.settings.instagram_url != blank -%}
           <a href="{{ section.settings.instagram_url }}" aria-label="Instagram" target="_blank" rel="noopener">{%- render 'icon' with 'instagram' -%}</a>
