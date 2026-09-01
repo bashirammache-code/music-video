@@ -441,7 +441,7 @@ p { margin: 0; }
 .site-footer__contact-icon svg { width: 15px; height: 15px; }
 .site-footer__contact-note { margin-top: 10px; font-size: .8rem; opacity: .6; }
 
-.site-footer__col h3 { font-family: var(--font-body); font-weight: 600; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 18px; color: var(--color-text); }
+.site-footer__col h3 { font-family: var(--font-body); font-weight: 700; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 18px; color: var(--color-text); }
 .site-footer__col ul li { margin-bottom: 10px; }
 .site-footer__col a { font-size: .9rem; opacity: .8; }
 .site-footer__col a:hover { opacity: 1; }
