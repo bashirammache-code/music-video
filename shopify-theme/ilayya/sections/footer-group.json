@@ -50,7 +50,18 @@
     },
     "footer": {
       "type": "footer",
-      "settings": {}
+      "settings": {},
+      "blocks": {
+        "help": {
+          "type": "menu",
+          "settings": { "heading": "Help and Support", "menu": "footer" }
+        },
+        "about": {
+          "type": "menu",
+          "settings": { "heading": "About Us", "menu": "footer" }
+        }
+      },
+      "block_order": ["help", "about"]
     }
   },
   "order": ["newsletter", "trust-badges", "footer"]
