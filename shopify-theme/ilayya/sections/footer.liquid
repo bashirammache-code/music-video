@@ -42,9 +42,11 @@
     <div class="site-footer__col">
       <h3>{{ section.settings.help_heading }}</h3>
       <ul>
+        {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">Shipping Policy</a></li>{%- endif -%}
+        {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">Return Policy</a></li>{%- endif -%}
+        {%- if pages['track-my-order'] -%}<li><a href="{{ pages['track-my-order'].url }}">Track My Order</a></li>{%- endif -%}
+        {%- if pages['payment-method'] -%}<li><a href="{{ pages['payment-method'].url }}">Payment Method</a></li>{%- endif -%}
         {%- if pages['faqs'] -%}<li><a href="{{ pages['faqs'].url }}">FAQs</a></li>{%- endif -%}
-        {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title }}</a></li>{%- endif -%}
-        {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title }}</a></li>{%- endif -%}
         {%- if pages['contact'] -%}<li><a href="{{ pages['contact'].url }}">Contact Us</a></li>{%- endif -%}
       </ul>
     </div>
@@ -53,8 +55,18 @@
       <h3>{{ section.settings.about_heading }}</h3>
       <ul>
         {%- if pages['about'] -%}<li><a href="{{ pages['about'].url }}">About Us</a></li>{%- endif -%}
-        {%- if shop.terms_of_service -%}<li><a href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title }}</a></li>{%- endif -%}
-        {%- if shop.privacy_policy -%}<li><a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a></li>{%- endif -%}
+        {%- if pages['sustainability'] -%}<li><a href="{{ pages['sustainability'].url }}">Sustainability</a></li>{%- endif -%}
+        {%- if shop.terms_of_service -%}<li><a href="{{ shop.terms_of_service.url }}">Terms and Conditions</a></li>{%- endif -%}
+        {%- if shop.privacy_policy -%}<li><a href="{{ shop.privacy_policy.url }}">Privacy Policy</a></li>{%- endif -%}
+        {%- comment -%}
+          "Legal notice" has no dedicated shop.* accessor in Liquid, so it's
+          picked out of the general policies list by title instead.
+        {%- endcomment -%}
+        {%- assign legal_notice = nil -%}
+        {%- for policy in shop.policies -%}
+          {%- if policy.title contains 'Legal' -%}{%- assign legal_notice = policy -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if legal_notice -%}<li><a href="{{ legal_notice.url }}">Intellectual Property Rights</a></li>{%- endif -%}
       </ul>
     </div>
 
@@ -120,7 +132,7 @@
     { "type": "header", "content": "Help and Support column" },
     { "type": "text", "id": "help_heading", "label": "Heading", "default": "Help and Support" },
     { "type": "header", "content": "About Us column" },
-    { "type": "text", "id": "about_heading", "label": "Heading", "default": "About Us" },
+    { "type": "text", "id": "about_heading", "label": "Heading", "default": "Company Info" },
     { "type": "header", "content": "Newsletter signup column" },
     { "type": "text", "id": "signup_heading", "label": "Heading", "default": "Get 10% Off" },
     { "type": "textarea", "id": "signup_text", "label": "Text", "default": "Sign up for early access to new drops and 10% off your first order." }
