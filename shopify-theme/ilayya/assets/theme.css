@@ -429,6 +429,18 @@ p { margin: 0; }
 .site-footer__brand p { opacity: .75; margin: 14px 0 18px; max-width: 340px; font-size: .92rem; }
 .site-footer__social { display: flex; gap: 16px; }
 .site-footer__social svg { width: 18px; height: 18px; }
+
+/* "Need to get in touch?" contact block, under the brand column */
+.site-footer__contact { margin-top: 28px; }
+.site-footer__contact h3 { font-family: var(--font-body); font-size: 1.02rem; font-weight: 700; text-transform: none; letter-spacing: 0; margin-bottom: 14px; }
+.site-footer__contact-email { display: inline-flex; align-items: center; gap: 10px; font-size: .9rem; color: var(--color-text); opacity: .85; }
+.site-footer__contact-icon {
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--color-border);
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--color-accent);
+}
+.site-footer__contact-icon svg { width: 15px; height: 15px; }
+.site-footer__contact-note { margin-top: 10px; font-size: .8rem; opacity: .6; }
+
 .site-footer__col h3 { font-family: var(--font-body); font-weight: 600; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 18px; color: var(--color-text); }
 .site-footer__col ul li { margin-bottom: 10px; }
 .site-footer__col a { font-size: .9rem; opacity: .8; }

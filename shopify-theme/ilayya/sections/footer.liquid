@@ -12,18 +12,51 @@
           <a href="{{ section.settings.pinterest_url }}" aria-label="Pinterest" target="_blank" rel="noopener">{%- render 'icon' with 'pinterest' -%}</a>
         {%- endif -%}
       </div>
+
+      {%- comment -%}
+        Falls back to the shop's own contact email (Settings > General) when
+        no email is set here, so this never shows blank.
+      {%- endcomment -%}
+      {%- assign contact_email = section.settings.contact_email | default: shop.email -%}
+      {%- if section.settings.contact_heading != blank and contact_email != blank -%}
+        <div class="site-footer__contact">
+          <h3>{{ section.settings.contact_heading }}</h3>
+          <a href="mailto:{{ contact_email }}" class="site-footer__contact-email">
+            <span class="site-footer__contact-icon">{%- render 'icon' with 'mail' -%}</span>
+            {{ contact_email }}
+          </a>
+          {%- if section.settings.contact_note != blank -%}
+            <p class="site-footer__contact-note">{{ section.settings.contact_note }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
     </div>
 
-    {%- for block in section.blocks -%}
-      <div class="site-footer__col" {{ block.shopify_attributes }}>
-        <h3>{{ block.settings.heading }}</h3>
-        <ul>
-          {%- for link in linklists[block.settings.menu].links -%}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {%- endfor -%}
-        </ul>
-      </div>
-    {%- endfor -%}
+    {%- comment -%}
+      These two columns link straight to the store's own pages and policies
+      (Settings > Policies, and the Pages you've already created) instead of
+      a navigation menu someone has to remember to fill in. Each link only
+      shows once the page/policy actually exists, and new ones (e.g. adding
+      a Shipping policy or a Track Order page later) appear automatically.
+    {%- endcomment -%}
+    <div class="site-footer__col">
+      <h3>{{ section.settings.help_heading }}</h3>
+      <ul>
+        {%- if pages['faqs'] -%}<li><a href="{{ pages['faqs'].url }}">FAQs</a></li>{%- endif -%}
+        {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title }}</a></li>{%- endif -%}
+        {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title }}</a></li>{%- endif -%}
+        {%- if pages['contact'] -%}<li><a href="{{ pages['contact'].url }}">Contact Us</a></li>{%- endif -%}
+      </ul>
+    </div>
+
+    <div class="site-footer__col">
+      <h3>{{ section.settings.about_heading }}</h3>
+      <ul>
+        {%- if pages['about'] -%}<li><a href="{{ pages['about'].url }}">About Us</a></li>{%- endif -%}
+        {%- if shop.terms_of_service -%}<li><a href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title }}</a></li>{%- endif -%}
+        {%- if shop.privacy_policy -%}<li><a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a></li>{%- endif -%}
+      </ul>
+    </div>
 
     <div class="site-footer__col site-footer__signup">
       <h3>{{ section.settings.signup_heading }}</h3>
@@ -80,25 +113,17 @@
     { "type": "textarea", "id": "brand_text", "label": "Brand text", "default": "Demi-fine jewelry, made to last. Designed in small batches, worn every day." },
     { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
     { "type": "url", "id": "pinterest_url", "label": "Pinterest URL" },
+    { "type": "header", "content": "Need to get in touch? column" },
+    { "type": "text", "id": "contact_heading", "label": "Heading", "default": "Need to get in touch?" },
+    { "type": "text", "id": "contact_email", "label": "Support email", "info": "Leave blank to use the shop's contact email from Settings > General." },
+    { "type": "textarea", "id": "contact_note", "label": "Note", "default": "Our customer support team is available 24/7." },
+    { "type": "header", "content": "Help and Support column" },
+    { "type": "text", "id": "help_heading", "label": "Heading", "default": "Help and Support" },
+    { "type": "header", "content": "About Us column" },
+    { "type": "text", "id": "about_heading", "label": "Heading", "default": "About Us" },
     { "type": "header", "content": "Newsletter signup column" },
     { "type": "text", "id": "signup_heading", "label": "Heading", "default": "Get 10% Off" },
     { "type": "textarea", "id": "signup_text", "label": "Text", "default": "Sign up for early access to new drops and 10% off your first order." }
-  ],
-  "blocks": [
-    {
-      "type": "menu",
-      "name": "Menu column",
-      "settings": [
-        { "type": "text", "id": "heading", "label": "Heading", "default": "Help and Support" },
-        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
-      ]
-    }
-  ],
-  "default": {
-    "blocks": [
-      { "type": "menu", "settings": { "heading": "Help and Support" } },
-      { "type": "menu", "settings": { "heading": "About Us" } }
-    ]
-  }
+  ]
 }
 {% endschema %}
