@@ -265,7 +265,7 @@
     Ilayya.showAddedModal = show;
   }
 
-  /* ---------- Signup pop-up: once per visitor, after a short delay ---------- */
+  /* ---------- Signup pop-up: once per visitor, 20s after page load ---------- */
   function initSignupPopup() {
     var modal = qs('#SignupModal');
     if (!modal) return;
@@ -290,7 +290,7 @@
       setTimeout(function () {
         open();
         try { window.localStorage.setItem(STORAGE_KEY, '1'); } catch (err) { /* private browsing: ignore */ }
-      }, justPosted ? 0 : 2500);
+      }, justPosted ? 0 : 20000);
     }
 
     Ilayya.openSignupModal = open;
