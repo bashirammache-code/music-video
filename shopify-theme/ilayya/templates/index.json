@@ -135,7 +135,16 @@
       "type": "testimonials",
       "settings": {
         "heading": "Loved, daily"
-      }
+      },
+      "blocks": {
+        "t1": { "type": "testimonial", "settings": { "quote": "The quality is incredible and it hasn't tarnished once. My new everyday ring.", "author": "Sofia R." } },
+        "t2": { "type": "testimonial", "settings": { "quote": "I get compliments every time I wear these hoops. Effortlessly elegant, exactly as pictured.", "author": "Maya K." } },
+        "t3": { "type": "testimonial", "settings": { "quote": "Ordered as a gift and ended up keeping it for myself. Feels so much more expensive than it is.", "author": "Elena T." } },
+        "t4": { "type": "testimonial", "settings": { "quote": "Fast shipping and the packaging alone felt like a treat. Already eyeing my next piece.", "author": "Rania H." } },
+        "t5": { "type": "testimonial", "settings": { "quote": "I wear my chain to the gym, in the shower, everywhere — still looks brand new.", "author": "Layla M." } },
+        "t6": { "type": "testimonial", "settings": { "quote": "The team was so helpful getting my ring sized right. Lovely experience from start to finish.", "author": "Nour A." } }
+      },
+      "block_order": ["t1", "t2", "t3", "t4", "t5", "t6"]
     }
   },
   "order": [

@@ -749,6 +749,16 @@
     if (nextBtn) nextBtn.addEventListener('click', function () { row.scrollBy({ left: 320, behavior: 'smooth' }); });
   };
 
+  /* ---------- Testimonials: horizontal scroll, switched via the arrow buttons ---------- */
+  function initTestimonials() {
+    var row = qs('#TestimonialsRow');
+    if (!row) return;
+    var prevBtn = qs('[data-testimonials-prev]');
+    var nextBtn = qs('[data-testimonials-next]');
+    if (prevBtn) prevBtn.addEventListener('click', function () { row.scrollBy({ left: -300, behavior: 'smooth' }); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { row.scrollBy({ left: 300, behavior: 'smooth' }); });
+  }
+
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
@@ -763,6 +773,7 @@
     initQuickAdd();
     initProductForms();
     initQuantitySteppers();
+    initTestimonials();
   });
 
   window.Ilayya = Ilayya;

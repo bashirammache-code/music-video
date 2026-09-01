@@ -1,18 +1,35 @@
 <div class="section-padding testimonials">
   <div class="container">
-    <div class="section-heading section-heading--center">
-      <h2 class="section-heading__title">{{ section.settings.heading }}</h2>
-    </div>
-    <div class="testimonials__grid">
-      {%- for block in section.blocks -%}
-        <div class="testimonial-card" {{ block.shopify_attributes }}>
-          <div class="testimonial-card__stars">
-            {%- for i in (1..5) -%}{%- render 'icon' with 'star' -%}{%- endfor -%}
-          </div>
-          <p class="testimonial-card__quote">&ldquo;{{ block.settings.quote }}&rdquo;</p>
-          <p class="testimonial-card__author">{{ block.settings.author }}</p>
+    <div class="testimonials__layout">
+      <div class="testimonials__stat">
+        <h2 class="testimonials__stat-heading">{{ section.settings.heading }}</h2>
+        <div class="testimonials__stat-stars">
+          {%- for i in (1..5) -%}{%- render 'icon' with 'star' -%}{%- endfor -%}
         </div>
-      {%- endfor -%}
+        {%- comment -%}
+          Only shows once you've entered a real total below — left blank on
+          purpose rather than defaulting to a made-up review count.
+        {%- endcomment -%}
+        {%- if section.settings.stat_caption != blank -%}
+          <p class="testimonials__stat-caption">{{ section.settings.stat_caption }}</p>
+        {%- endif -%}
+      </div>
+
+      <div class="testimonials__carousel">
+        <button type="button" class="testimonials__arrow testimonials__arrow--prev" data-testimonials-prev aria-label="Previous reviews">&#8249;</button>
+        <div class="testimonials__row" id="TestimonialsRow">
+          {%- for block in section.blocks -%}
+            <div class="testimonial-card" {{ block.shopify_attributes }}>
+              <div class="testimonial-card__stars">
+                {%- for i in (1..5) -%}{%- render 'icon' with 'star' -%}{%- endfor -%}
+              </div>
+              <p class="testimonial-card__quote">{{ block.settings.quote }}</p>
+              <p class="testimonial-card__author">{{ block.settings.author }}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+        <button type="button" class="testimonials__arrow testimonials__arrow--next" data-testimonials-next aria-label="Next reviews">&#8250;</button>
+      </div>
     </div>
   </div>
 </div>
@@ -21,7 +38,13 @@
 {
   "name": "Testimonials",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Loved, daily" }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Loved, daily" },
+    {
+      "type": "text",
+      "id": "stat_caption",
+      "label": "Review count caption",
+      "info": "Optional, e.g. \"from 11,033 reviews.\" Leave blank until you have a real total (from a reviews app under Apps, for example) — it only shows once filled in."
+    }
   ],
   "blocks": [
     {
@@ -35,9 +58,12 @@
   ],
   "default": {
     "blocks": [
-      { "type": "testimonial", "settings": { "author": "Sofia R." } },
-      { "type": "testimonial", "settings": { "author": "Maya K." } },
-      { "type": "testimonial", "settings": { "author": "Elena T." } }
+      { "type": "testimonial", "settings": { "quote": "The quality is incredible and it hasn't tarnished once. My new everyday ring.", "author": "Sofia R." } },
+      { "type": "testimonial", "settings": { "quote": "I get compliments every time I wear these hoops. Effortlessly elegant, exactly as pictured.", "author": "Maya K." } },
+      { "type": "testimonial", "settings": { "quote": "Ordered as a gift and ended up keeping it for myself. Feels so much more expensive than it is.", "author": "Elena T." } },
+      { "type": "testimonial", "settings": { "quote": "Fast shipping and the packaging alone felt like a treat. Already eyeing my next piece.", "author": "Rania H." } },
+      { "type": "testimonial", "settings": { "quote": "I wear my chain to the gym, in the shower, everywhere — still looks brand new.", "author": "Layla M." } },
+      { "type": "testimonial", "settings": { "quote": "The team was so helpful getting my ring sized right. Lovely experience from start to finish.", "author": "Nour A." } }
     ]
   }
 }
