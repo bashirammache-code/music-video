@@ -629,7 +629,7 @@ p { margin: 0; }
 }
 .promo-tab[hidden] { display: none; }
 .promo-tab__trigger {
-  background: var(--color-text); color: var(--color-background);
+  background: var(--color-accent); color: var(--color-background);
   writing-mode: vertical-rl; transform: rotate(180deg);
   padding: 22px 11px; font-family: var(--font-body); font-weight: 700; font-size: .74rem;
   letter-spacing: .12em; text-transform: uppercase; cursor: pointer; border: none;
@@ -637,7 +637,7 @@ p { margin: 0; }
 }
 .promo-tab__close {
   position: absolute; top: -14px; left: -14px; width: 26px; height: 26px; border-radius: 50%;
-  background: var(--color-background); border: 1px solid var(--color-text); color: var(--color-text);
+  background: var(--color-background); border: 1px solid var(--color-accent); color: var(--color-accent);
   display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;
 }
 .promo-tab__close svg { width: 11px; height: 11px; }
