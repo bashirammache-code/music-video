@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  </title>
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&display=swap" rel="stylesheet">
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  <style>
+    :root {
+      --color-background: {{ settings.color_background }};
+      --color-text: {{ settings.color_text }};
+      --color-accent: {{ settings.color_accent }};
+      --color-accent-deep: {{ settings.color_accent_deep }};
+      --color-surface: {{ settings.color_surface }};
+      --color-border: {{ settings.color_border }};
+      --button-radius: {{ settings.button_radius }}px;
+    }
+  </style>
+  {{ content_for_header }}
+
+  <script>document.documentElement.classList.remove('no-js');</script>
+</head>
+<body class="template-{{ request.page_type | handleize }}">
+
+  <a class="skip-to-content" href="#MainContent">Skip to content</a>
+
+  <div id="SiteChrome" class="site-chrome{% if template == 'index' %} site-chrome--overlay{% endif %}">
+    {% sections 'header-group' %}
+  </div>
+
+  <main id="MainContent" role="main">
+    {{ content_for_layout }}
+  </main>
+
+  {% sections 'footer-group' %}
+
+  {% section 'cart-drawer' %}
+  {% render 'added-to-cart-modal' %}
+  {%- if settings.signup_popup_enabled -%}
+    {% render 'signup-popup' %}
+    {%- comment -%}
+      Fixed vertical tab on every page, visible while scrolling. Clicking it
+      opens the same signup modal above rather than duplicating that flow.
+    {%- endcomment -%}
+    <div class="promo-tab" id="PromoTab">
+      <button type="button" class="promo-tab__close" id="PromoTabClose" aria-label="Dismiss">{%- render 'icon' with 'close' -%}</button>
+      <button type="button" class="promo-tab__trigger" id="PromoTabTrigger">Get 10% Off</button>
+    </div>
+  {%- endif -%}
+
+  {{ 'theme.js' | asset_url | script_tag }}
+</body>
+</html>

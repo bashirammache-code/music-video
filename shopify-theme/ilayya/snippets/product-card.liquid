@@ -1,0 +1,48 @@
+{%- comment -%}
+  Usage: {% render 'product-card', product: product %}
+{%- endcomment -%}
+<div class="product-card">
+  <a href="{{ product.url }}" class="product-card__media">
+    {%- if product.featured_image -%}
+      <img
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        alt="{{ product.featured_image.alt | escape }}"
+        loading="lazy"
+        width="600"
+        height="{{ 600 | divided_by: product.featured_image.aspect_ratio }}"
+        class="product-card__img product-card__img--main">
+      {%- if product.images[1] -%}
+        <img
+          src="{{ product.images[1] | image_url: width: 600 }}"
+          alt=""
+          loading="lazy"
+          width="600"
+          height="{{ 600 | divided_by: product.images[1].aspect_ratio }}"
+          class="product-card__img product-card__img--hover">
+      {%- endif -%}
+    {%- else -%}
+      <div class="product-card__placeholder">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+    {%- endif -%}
+    {%- if product.compare_at_price > product.price -%}
+      <span class="product-card__badge">Sale</span>
+    {%- elsif product.tags contains 'new' -%}
+      <span class="product-card__badge product-card__badge--new">New</span>
+    {%- endif -%}
+    <button
+      type="button"
+      class="quick-add"
+      aria-label="Add {{ product.title | escape }} to cart"
+      data-quick-add
+      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+      data-product-title="{{ product.title | escape }}"
+      data-product-price="{{ product.price | money }}"
+      {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+    >
+      {%- render 'icon' with 'plus' -%}
+    </button>
+  </a>
+  <div class="product-card__info">
+    <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    {%- render 'price', product: product -%}
+  </div>
+</div>

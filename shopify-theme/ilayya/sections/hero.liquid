@@ -1,0 +1,105 @@
+{%- liquid
+  assign blocks = section.blocks
+  assign slide_count = blocks.size
+  if slide_count == 0
+    assign slide_count = 2
+  endif
+-%}
+<div
+  class="hero-slideshow"
+  style="--hero-height: {{ section.settings.height }}px;"
+  data-hero-slideshow
+  data-autoplay-seconds="{{ section.settings.autoplay_seconds }}">
+  <div class="hero-slideshow__track" data-hero-track>
+    {%- for block in blocks -%}
+      <div class="hero-slideshow__slide" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
+        {%- assign slide_image = block.settings.image -%}
+        {%- if slide_image != blank -%}
+          <img
+            src="{{ slide_image | image_url: width: 2000 }}"
+            alt="{{ slide_image.alt | escape }}"
+            class="hero__image"
+            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+            width="2000"
+            height="{{ 2000 | divided_by: slide_image.aspect_ratio }}">
+        {%- elsif forloop.index == 1 -%}
+          {%- comment -%} Falls back to the commissioned hero shoot until a real image is uploaded to this slide. {%- endcomment -%}
+          <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
+        {%- elsif forloop.index == 2 -%}
+          {%- comment -%} Falls back to the second commissioned hero shoot until a real image is uploaded to this slide. {%- endcomment -%}
+          <img src="{{ 'hero-default-2.jpg' | asset_url }}" alt="" class="hero__image" loading="lazy" width="1006" height="1190">
+        {%- endif -%}
+      </div>
+    {%- else -%}
+      {%- comment -%} No slide blocks added yet — show the two commissioned defaults so the section never renders empty. {%- endcomment -%}
+      <div class="hero-slideshow__slide">
+        <img src="{{ 'hero-default.jpg' | asset_url }}" alt="" class="hero__image" loading="eager" width="1400" height="1662">
+      </div>
+      <div class="hero-slideshow__slide">
+        <img src="{{ 'hero-default-2.jpg' | asset_url }}" alt="" class="hero__image" loading="lazy" width="1006" height="1190">
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <div class="hero__scrim" aria-hidden="true"></div>
+
+  <div class="hero__content hero__content--{{ section.settings.alignment }}">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="hero__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    <h1 class="hero__heading">{{ section.settings.heading }}</h1>
+    {%- if section.settings.subheading != blank -%}
+      <p class="hero__subheading">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a href="{{ section.settings.button_url }}" class="btn btn--primary btn--light">{{ section.settings.button_label }}</a>
+    {%- endif -%}
+  </div>
+
+  {%- if slide_count > 1 -%}
+    <button type="button" class="hero-slideshow__arrow hero-slideshow__arrow--prev" data-hero-prev aria-label="Previous slide">&#8249;</button>
+    <button type="button" class="hero-slideshow__arrow hero-slideshow__arrow--next" data-hero-next aria-label="Next slide">&#8250;</button>
+    <div class="hero-slideshow__dots" data-hero-dots>
+      {%- for i in (1..slide_count) -%}
+        <button type="button" class="hero-slideshow__dot{% if forloop.first %} is-active{% endif %}" data-hero-dot data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"></button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "settings": [
+    { "type": "range", "id": "height", "label": "Height (px)", "min": 400, "max": 900, "step": 20, "default": 680 },
+    { "type": "range", "id": "autoplay_seconds", "label": "Autoplay speed (seconds)", "info": "Set to 0 to disable autoplay — slides still swipe manually.", "min": 0, "max": 12, "step": 1, "default": 5 },
+    { "type": "select", "id": "alignment", "label": "Content alignment", "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ], "default": "left" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The New Collection" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Quietly bold, made to last" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Demi-fine jewelry designed for everyday wear, gold-plated stainless steel finished by hand." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop New Arrivals" },
+    { "type": "url", "id": "button_url", "label": "Button link" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero banner",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

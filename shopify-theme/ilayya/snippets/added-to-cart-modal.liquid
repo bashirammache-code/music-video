@@ -1,0 +1,31 @@
+{%- comment -%}
+  Shared "Added to your cart" confirmation, shown after any AJAX add to
+  cart (quick-add on a product card, or the product page form). Briefly
+  shows a loading spinner, then a checkmark with View Cart / Checkout /
+  Continue Shopping. See theme.js `Ilayya.showAddedModal`.
+{%- endcomment -%}
+<div class="added-modal" id="AddedModal" hidden>
+  <div class="added-modal__backdrop" id="AddedModalBackdrop"></div>
+  <div class="added-modal__box" role="dialog" aria-modal="true" aria-label="Added to cart">
+    <button type="button" class="added-modal__close" id="AddedModalClose" aria-label="Close">&times;</button>
+    <div class="added-modal__loading" id="AddedModalLoading">
+      <div class="spinner" aria-hidden="true"></div>
+    </div>
+    <div class="added-modal__success" id="AddedModalSuccess" hidden>
+      <div class="added-modal__check" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 12 L10 18 L20 6" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="added-modal__msg">Added to your cart</p>
+      <div class="added-modal__item">
+        <div class="added-modal__thumb" id="AddedModalThumb"></div>
+        <div>
+          <p class="added-modal__name" id="AddedModalName"></p>
+          <p class="added-modal__price" id="AddedModalPrice"></p>
+        </div>
+      </div>
+      <a href="{{ routes.cart_url }}" class="btn btn--outline btn--full" id="AddedModalViewCart">View Cart</a>
+      <a href="{{ routes.cart_url }}/checkout" class="btn btn--primary btn--full" id="AddedModalCheckout">Checkout</a>
+      <button type="button" class="added-modal__continue" id="AddedModalContinue">Continue Shopping</button>
+    </div>
+  </div>
+</div>

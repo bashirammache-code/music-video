@@ -1,0 +1,65 @@
+<div class="section-padding">
+  <div class="container container--narrow">
+    <div class="section-heading section-heading--center">
+      <h2 class="section-heading__title">{{ section.settings.heading }}</h2>
+    </div>
+    <div class="faq-list">
+      {%- for block in section.blocks -%}
+        <details class="faq-item" {{ block.shopify_attributes }}>
+          <summary class="faq-question">
+            {{ block.settings.question }}
+            <svg class="chevron" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3 L5 7 L8.5 3" stroke="currentColor" fill="none" stroke-width="1.4"/></svg>
+          </summary>
+          <div class="faq-answer">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently Asked Questions" }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question" },
+        { "type": "richtext", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "question", "settings": {
+        "question": "What is your jewelry made of?",
+        "answer": "<p>Every piece is cast in 316L stainless steel with PVD gold plating — a solid, tarnish-resistant standard built to hold up to everyday wear.</p>"
+      } },
+      { "type": "question", "settings": {
+        "question": "Is it safe for sensitive skin?",
+        "answer": "<p>Yes. Every Ilayya piece is nickel-free and hypoallergenic, designed to be worn daily without irritation.</p>"
+      } },
+      { "type": "question", "settings": {
+        "question": "How long does shipping take?",
+        "answer": "<p>Standard delivery typically takes 3–5 business days. <em>(Placeholder — exact timelines pending confirmation with our shipping partners.)</em></p>"
+      } },
+      { "type": "question", "settings": {
+        "question": "Do you offer cash on delivery?",
+        "answer": "<p>Yes, cash on delivery is available at checkout alongside standard payment methods.</p>"
+      } },
+      { "type": "question", "settings": {
+        "question": "What is your return policy?",
+        "answer": "<p>We offer 14-day returns on unworn pieces in their original packaging. <em>(Placeholder — final policy pending.)</em></p>"
+      } },
+      { "type": "question", "settings": {
+        "question": "How do I care for my jewelry?",
+        "answer": "<p>Avoid contact with water, perfume, and lotion. Store each piece in its pouch when not worn, and wipe gently with a soft cloth to keep it looking new.</p>"
+      } }
+    ]
+  }
+}
+{% endschema %}

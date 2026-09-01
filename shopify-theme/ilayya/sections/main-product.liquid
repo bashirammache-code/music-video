@@ -1,0 +1,157 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign product_type_handle = product.type | handleize -%}
+<div class="product section-padding">
+  <a href="{{ collections[product_type_handle].url | default: routes.all_products_collection_url }}" class="product-page__back">
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M15 5 L8 12 L15 19" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+    Back to Shop
+  </a>
+
+  <div class="container product__grid">
+
+    <div class="product__gallery" id="ProductGallery">
+      {%- if product.media.size > 0 -%}
+        <div class="product__gallery-frame-wrap">
+          {%- if product.media.size > 1 -%}
+            <button type="button" class="gallery-arrow gallery-arrow--prev" data-gallery-prev aria-label="Previous image">&#8249;</button>
+          {%- endif -%}
+          <div class="product__gallery-main">
+            {%- for media in product.media -%}
+              <img
+                src="{{ media | image_url: width: 1200 }}"
+                alt="{{ media.alt | escape }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                width="1200"
+                height="{{ 1200 | divided_by: media.aspect_ratio }}"
+                class="product__gallery-image{% if forloop.first %} is-active{% endif %}"
+                data-media-id="{{ media.id }}"
+                data-media-index="{{ forloop.index0 }}">
+            {%- endfor -%}
+          </div>
+          {%- if product.media.size > 1 -%}
+            <button type="button" class="gallery-arrow gallery-arrow--next" data-gallery-next aria-label="Next image">&#8250;</button>
+          {%- endif -%}
+        </div>
+        {%- if product.media.size > 1 -%}
+          <p class="product__gallery-counter" id="ProductGalleryCounter" data-count="{{ product.media.size }}">1/{{ product.media.size }}</p>
+        {%- endif -%}
+      {%- else -%}
+        <div class="product__gallery-frame-wrap">
+          <div class="product__gallery-main">
+            <div class="product__placeholder">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="product__info">
+      {%- if product.vendor != blank -%}<p class="product__vendor">{{ product.vendor }}</p>{%- endif -%}
+      <h1 class="product__title">{{ product.title }}</h1>
+      <div id="ProductPrice">{%- render 'price', variant: current_variant -%}</div>
+
+      {%- if product.metafields.reviews.rating -%}
+        <div class="product__rating">
+          {%- for i in (1..5) -%}{%- render 'icon' with 'star' -%}{%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- form 'product', product, id: 'ProductForm', class: 'product__form' -%}
+        <input type="hidden" name="id" id="ProductVariantId" value="{{ current_variant.id }}">
+
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <div class="product__option" data-option-position="{{ option.position }}">
+              <label class="product__option-label">{{ option.name }}</label>
+              <div class="product__option-values">
+                {%- for value in option.values -%}
+                  <button
+                    type="button"
+                    class="option-pill{% if value == option.selected_value %} is-selected{% endif %}"
+                    data-option-position="{{ option.position }}"
+                    data-option-value="{{ value | escape }}">
+                    {{ value }}
+                  </button>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endunless -%}
+
+        <div class="product__quantity">
+          <label for="Quantity">Quantity</label>
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" data-qty="decrease" aria-label="Decrease quantity">{%- render 'icon' with 'minus' -%}</button>
+            <input type="number" id="Quantity" name="quantity" value="1" min="1" inputmode="numeric">
+            <button type="button" class="qty-btn" data-qty="increase" aria-label="Increase quantity">{%- render 'icon' with 'plus' -%}</button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn--primary btn--full"
+          id="AddToCart"
+          data-product-title="{{ product.title | escape }}"
+          {% unless current_variant.available %}disabled{% endunless %}>
+          <span id="AddToCartText">
+            {%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+          </span>
+        </button>
+      {%- endform -%}
+
+      {%- if product.description != blank -%}
+        <div class="product__desc">{{ product.description }}</div>
+      {%- endif -%}
+
+      <div class="product__accordion">
+        <details>
+          <summary>Materials &amp; Care</summary>
+          <div class="product__accordion-content">
+            <p>{{ section.settings.materials_text }}</p>
+          </div>
+        </details>
+        <details>
+          <summary>Shipping &amp; Returns</summary>
+          <div class="product__accordion-content">
+            <p>{{ section.settings.shipping_text }}</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="cross-sell container" id="ProductRecommendations" data-url="{{ routes.product_recommendations_url }}?section_id=product-recommendations&amp;product_id={{ product.id }}&amp;limit=4" hidden>
+    <div class="cross-sell__head"><h3>Why not add</h3>
+      <div class="cross-sell__nav">
+        <button type="button" class="cross-sell__arrow" data-cross-sell-prev aria-label="Scroll left">&#8249;</button>
+        <button type="button" class="cross-sell__arrow" data-cross-sell-next aria-label="Scroll right">&#8250;</button>
+      </div>
+    </div>
+    <div class="cross-sell__row" id="CrossSellRow"></div>
+  </div>
+
+  <script type="application/json" id="ProductVariants-{{ section.id }}">
+    {{ product.variants | json }}
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.Ilayya && window.Ilayya.initProductForm) {
+        window.Ilayya.initProductForm('{{ section.id }}');
+      }
+      if (window.Ilayya && window.Ilayya.initProductGallery) {
+        window.Ilayya.initProductGallery();
+      }
+      if (window.Ilayya && window.Ilayya.initCrossSell) {
+        window.Ilayya.initCrossSell();
+      }
+    });
+  </script>
+</div>
+
+{% schema %}
+{
+  "name": "Product information",
+  "settings": [
+    { "type": "textarea", "id": "materials_text", "label": "Materials & care text", "default": "Made from 316L stainless steel with PVD gold plating. Nickel-free and hypoallergenic — safe for sensitive skin, designed to last." },
+    { "type": "textarea", "id": "shipping_text", "label": "Shipping & returns text", "default": "Free shipping on orders over $75. Easy 14-day returns on unworn pieces. (placeholder — final policy pending)" }
+  ]
+}
+{% endschema %}

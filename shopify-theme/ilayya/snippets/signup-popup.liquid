@@ -1,0 +1,22 @@
+{%- comment -%}
+  First-order discount pop-up. Shows once per visitor (localStorage-gated),
+  after a short delay. Copy is intentionally exact — do not reword without
+  checking with the merchant first.
+{%- endcomment -%}
+<div class="signup-modal" id="SignupModal" hidden>
+  <div class="signup-modal__backdrop" id="SignupBackdrop"></div>
+  <div class="signup-modal__box" role="dialog" aria-modal="true" aria-label="Get 10% off your first order">
+    <button type="button" class="signup-modal__close" id="SignupClose" aria-label="Close">&times;</button>
+    <h2>Get 10% off your first order</h2>
+    <p>Sign up and we&rsquo;ll send you a code for 10% off, plus first access to new pieces.</p>
+    {%- form 'customer', id: 'SignupForm', class: 'signup-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <input type="email" name="contact[email]" placeholder="Email address" required aria-label="Email address">
+      <button type="submit" class="btn btn--primary btn--full">Send My Code</button>
+      {%- if form.posted_successfully? -%}
+        <p class="signup-modal__success">Thank you &mdash; check your inbox for your code.</p>
+      {%- endif -%}
+    {%- endform -%}
+    <p class="signup-modal__note">No spam, just what&rsquo;s new.</p>
+  </div>
+</div>

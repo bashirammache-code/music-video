@@ -1,0 +1,36 @@
+{%- comment -%}
+  Rendered standalone via fetch to routes.product_recommendations_url (see
+  Ilayya.initCrossSell in theme.js) — this is how Shopify's native product
+  recommendations API works: it re-renders just this section with the
+  `recommendations` object populated for the given product_id.
+{%- endcomment -%}
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
+  {%- for product in recommendations.products -%}
+    <a href="{{ product.url }}" class="cross-sell__item">
+      <div class="cross-sell__media">
+        {%- if product.featured_image -%}
+          <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.featured_image.alt | escape }}" loading="lazy" width="400" height="{{ 400 | divided_by: product.featured_image.aspect_ratio }}">
+        {%- else -%}
+          <div class="product-card__placeholder">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        {%- endif -%}
+      </div>
+      <p class="cross-sell__name">{{ product.title }}</p>
+      <div class="cross-sell__foot">
+        <span class="cross-sell__price">{{ product.price | money }}</span>
+        <button
+          type="button"
+          class="cross-sell__add"
+          data-quick-add
+          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+          data-product-title="{{ product.title | escape }}"
+          data-product-price="{{ product.price | money }}"
+          {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+        >Add</button>
+      </div>
+    </a>
+  {%- endfor -%}
+{%- endif -%}
+
+{% schema %}
+{ "name": "Product recommendations", "settings": [] }
+{% endschema %}

@@ -1,0 +1,51 @@
+<div class="collection section-padding">
+  <div class="container">
+    <div class="collection__header">
+      <h1 class="collection__title">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <div class="collection__description">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+
+    <div class="collection__toolbar">
+      <p class="collection__count">{{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}</p>
+      {%- form 'sort_by', collection -%}
+        <label for="SortBy" class="visually-hidden">Sort by</label>
+        <select name="sort_by" id="SortBy" onchange="this.form.submit()">
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name }}</option>
+          {%- endfor -%}
+        </select>
+      {%- endform -%}
+    </div>
+
+    {%- if collection.products.size > 0 -%}
+      {%- paginate collection.products by 24 -%}
+        <div class="product-grid" style="--columns: {{ section.settings.columns }};">
+          {%- for product in collection.products -%}
+            {%- render 'product-card', product: product -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Pagination">
+            {{ paginate | default_pagination }}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <p class="collection__empty">No products found in this collection yet.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection pages",
+  "settings": [
+    { "type": "select", "id": "columns", "label": "Columns", "options": [
+        { "value": "2", "label": "2" }, { "value": "3", "label": "3" }, { "value": "4", "label": "4" }
+      ], "default": "3" }
+  ]
+}
+{% endschema %}

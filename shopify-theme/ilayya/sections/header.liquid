@@ -1,0 +1,101 @@
+<header class="site-header">
+  <div class="site-header__row container">
+
+    <button class="site-header__menu-toggle" id="MenuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="MobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }} home">
+      {%- if settings.logo != blank -%}
+        <img src="{{ settings.logo | image_url: width: 320 }}" alt="{{ shop.name }}" width="160" loading="eager">
+      {%- else -%}
+        <img src="{{ 'logo-wordmark.png' | asset_url }}" alt="{{ shop.name }}" width="160" loading="eager">
+      {%- endif -%}
+    </a>
+
+    <div class="site-header__icons">
+      <button class="icon-btn" id="SearchToggle" aria-label="Search" aria-expanded="false" aria-controls="SearchDrawer">
+        {%- render 'icon' with 'search' -%}
+      </button>
+      <button class="icon-btn cart-toggle" id="CartToggle" aria-label="Cart" aria-expanded="false" aria-controls="CartDrawer">
+        {%- render 'icon' with 'bag' -%}
+        <span class="cart-count" id="CartCount" {% if cart.item_count == 0 %}data-zero{% endif %}>{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </div>
+
+  <nav class="site-nav" aria-label="Primary">
+    <ul>
+      {%- for link in linklists[section.settings.menu].links -%}
+        {%- if forloop.index > 1 -%}<li class="site-nav__dot" aria-hidden="true"></li>{%- endif -%}
+        {%- if link.links.size > 0 -%}
+          <li class="site-nav__item has-dropdown">
+            <a href="{{ link.url }}">
+              {{ link.title }}
+              <svg class="caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3 L5 7 L8.5 3" stroke="currentColor" fill="none" stroke-width="1.3"/></svg>
+            </a>
+            <ul class="site-nav__dropdown">
+              {%- for sublink in link.links -%}
+                <li><a href="{{ sublink.url }}">{{ sublink.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </li>
+        {%- else -%}
+          <li class="site-nav__item"><a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </nav>
+
+  <div class="search-drawer" id="SearchDrawer" hidden>
+    <div class="search-drawer__backdrop" id="SearchBackdrop"></div>
+    <div class="search-drawer__panel">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-drawer__form container">
+        <input type="search" name="q" id="SearchInput" placeholder="Search jewelry" value="{{ search.terms | escape }}" aria-label="Search" autocomplete="off">
+        <input type="hidden" name="type" value="product">
+        <button type="submit">{%- render 'icon' with 'search' -%}</button>
+        <button type="button" class="search-drawer__close" id="SearchClose" aria-label="Close search">{%- render 'icon' with 'close' -%}</button>
+      </form>
+      <div class="search-drawer__results container" id="SearchResults"></div>
+    </div>
+  </div>
+
+  <nav class="mobile-menu" id="MobileMenu" hidden aria-label="Mobile">
+    <ul>
+      {%- for link in linklists[section.settings.menu].links -%}
+        {%- if link.links.size > 0 -%}
+          <li>
+            <details class="mobile-menu__group">
+              <summary>
+                {{ link.title }}
+                <svg class="caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3 L5 7 L8.5 3" stroke="currentColor" fill="none" stroke-width="1.3"/></svg>
+              </summary>
+              <ul class="mobile-menu__sublist">
+                {%- for sublink in link.links -%}
+                  <li><a href="{{ sublink.url }}">{{ sublink.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </details>
+          </li>
+        {%- else -%}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </nav>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Build this as: Home, Jewelry (with Earrings/Bracelets/Necklaces nested under it), About (with About/FAQs nested under it), Contact. Nest sub-links under a parent in Online Store → Navigation to get the dropdown."
+    }
+  ]
+}
+{% endschema %}
