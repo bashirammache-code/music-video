@@ -100,6 +100,7 @@
 
   <div class="container site-footer__bottom">
     <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    <img class="site-footer__mark" src="{{ 'logo-wordmark.png' | asset_url }}" alt="{{ shop.name }}" width="90" loading="lazy">
     {%- comment -%}
       Only renders once a second language is actually added under Settings >
       Languages in Shopify Admin — invisible (and harmless) until then.
