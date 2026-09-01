@@ -630,27 +630,27 @@ p { margin: 0; }
 }
 .added-modal__continue:hover { opacity: 1; text-decoration: underline; }
 
-/* ---------- Promo tab: fixed "Get 10% Off" tab, right edge, all pages ---------- */
+/* ---------- Promo tab: fixed "Get 10% Off" tab, right edge, all pages ----------
+   Anchored to the bottom of the viewport (not vertically centered) so it never
+   drifts up next to the newsletter band or the footer's own "Get 10% Off"
+   column while scrolling — those already carry the same message. */
 .promo-tab {
-  position: fixed; top: 50%; right: 0; transform: translateY(-50%); z-index: 130;
+  position: fixed; bottom: 28px; right: 0; z-index: 130;
 }
 .promo-tab[hidden] { display: none; }
 .promo-tab__trigger {
   background: var(--color-accent); color: var(--color-background);
   writing-mode: vertical-rl; transform: rotate(180deg);
-  padding: 22px 11px; font-family: var(--font-body); font-weight: 700; font-size: .74rem;
-  letter-spacing: .12em; text-transform: uppercase; cursor: pointer; border: none;
+  padding: 14px 7px; font-family: var(--font-body); font-weight: 700; font-size: .62rem;
+  letter-spacing: .1em; text-transform: uppercase; cursor: pointer; border: none;
   box-shadow: -2px 0 10px rgba(0,0,0,.12);
 }
 .promo-tab__close {
-  position: absolute; top: -14px; left: -14px; width: 26px; height: 26px; border-radius: 50%;
+  position: absolute; top: -10px; left: -10px; width: 20px; height: 20px; border-radius: 50%;
   background: var(--color-background); border: 1px solid var(--color-accent); color: var(--color-accent);
   display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;
 }
-.promo-tab__close svg { width: 11px; height: 11px; }
-@media (max-width: 749px) {
-  .promo-tab__trigger { padding: 16px 8px; font-size: .68rem; }
-}
+.promo-tab__close svg { width: 9px; height: 9px; }
 
 /* ---------- FAQ accordion (native <details>, smooth chevron) ---------- */
 .faq-list { display: flex; flex-direction: column; }
