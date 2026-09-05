@@ -76,25 +76,24 @@
           {%- endfor -%}
         {%- endunless -%}
 
-        <div class="product__quantity">
-          <label for="Quantity">Quantity</label>
+        <div class="product__add-row">
           <div class="qty-stepper">
             <button type="button" class="qty-btn" data-qty="decrease" aria-label="Decrease quantity">{%- render 'icon' with 'minus' -%}</button>
-            <input type="number" id="Quantity" name="quantity" value="1" min="1" inputmode="numeric">
+            <input type="number" id="Quantity" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Quantity">
             <button type="button" class="qty-btn" data-qty="increase" aria-label="Increase quantity">{%- render 'icon' with 'plus' -%}</button>
           </div>
-        </div>
 
-        <button
-          type="submit"
-          class="btn btn--primary btn--full"
-          id="AddToCart"
-          data-product-title="{{ product.title | escape }}"
-          {% unless current_variant.available %}disabled{% endunless %}>
-          <span id="AddToCartText">
-            {%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
-          </span>
-        </button>
+          <button
+            type="submit"
+            class="btn btn--add-to-cart"
+            id="AddToCart"
+            data-product-title="{{ product.title | escape }}"
+            {% unless current_variant.available %}disabled{% endunless %}>
+            <span id="AddToCartText">
+              {%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+            </span>
+          </button>
+        </div>
       {%- endform -%}
 
       {%- if product.description != blank -%}

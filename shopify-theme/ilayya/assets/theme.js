@@ -338,15 +338,18 @@
 
       var card = btn.closest('.product-card, .cross-sell__item');
       var thumbHtml = '';
+      var quantity = 1;
       if (card) {
         var img = card.querySelector('img');
         if (img) thumbHtml = '<img src="' + img.src + '" alt="">';
+        var qtyInput = card.querySelector('.qty-stepper input[type="number"]');
+        if (qtyInput) quantity = parseInt(qtyInput.value, 10) || 1;
       }
 
       fetch(routes.cartAdd, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ id: variantId, quantity: 1 })
+        body: JSON.stringify({ id: variantId, quantity: quantity })
       })
         .then(function (res) { return res.json(); })
         .then(function () {
