@@ -19,24 +19,37 @@
       {%- endform -%}
     </div>
 
-    {%- if collection.products.size > 0 -%}
-      {%- paginate collection.products by 24 -%}
-        <div class="product-grid" style="--columns: {{ section.settings.columns }};">
+    {%- if collection.products.size == 0 -%}
+      <p class="collection__empty">No products found in this collection yet.</p>
+    {%- endif -%}
+  </div>
+
+  {%- if collection.products.size > 0 -%}
+    {%- paginate collection.products by 24 -%}
+      {%- comment -%}
+        Same full-bleed, hairline-gap, square-corner treatment as the
+        homepage's New Arrivals row and Shop by Category tiles (a Prada
+        category-page reference: edge-to-edge grid, thin gaps instead of
+        gutters, large portrait product shots, minimal caption below).
+        Breaks out of .container on purpose, same as those two sections.
+      {%- endcomment -%}
+      <div class="product-grid-bleed">
+        <div class="product-grid product-grid--bleed" style="--columns: {{ section.settings.columns }};">
           {%- for product in collection.products -%}
             {%- render 'product-card', product: product -%}
           {%- endfor -%}
         </div>
+      </div>
 
-        {%- if paginate.pages > 1 -%}
+      {%- if paginate.pages > 1 -%}
+        <div class="container">
           <nav class="pagination" aria-label="Pagination">
             {{ paginate | default_pagination }}
           </nav>
-        {%- endif -%}
-      {%- endpaginate -%}
-    {%- else -%}
-      <p class="collection__empty">No products found in this collection yet.</p>
-    {%- endif -%}
-  </div>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
 </div>
 
 {% schema %}

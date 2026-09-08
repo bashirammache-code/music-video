@@ -762,6 +762,32 @@
     if (nextBtn) nextBtn.addEventListener('click', function () { row.scrollBy({ left: 300, behavior: 'smooth' }); });
   }
 
+  /* ---------- Product card quick-add reveal: the qty stepper + Add to Cart
+     row stays hidden by default (see .product-card__cart-row in theme.css)
+     and only appears on hover on desktop, or — since there's no hover on
+     touch — once the card has scrolled into view. Revealed cards stay
+     revealed rather than hiding again as they scroll past. ---------- */
+  function initProductCardReveal() {
+    var cards = qsa('.product-card');
+    if (!cards.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      cards.forEach(function (card) { card.classList.add('product-card--revealed'); });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('product-card--revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -15% 0px', threshold: 0.35 });
+
+    cards.forEach(function (card) { observer.observe(card); });
+  }
+
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
@@ -777,6 +803,7 @@
     initProductForms();
     initQuantitySteppers();
     initTestimonials();
+    initProductCardReveal();
   });
 
   window.Ilayya = Ilayya;

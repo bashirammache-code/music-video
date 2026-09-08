@@ -325,8 +325,25 @@ p { margin: 0; }
 }
 
 /* Add to cart row on each product card: qty stepper + Add to Cart button,
-   same look as the product page's add-to-cart row. */
-.product-card__cart-row { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
+   same look as the product page's add-to-cart row. Stays hidden — no
+   permanent quantity/add-to-cart clutter under every tile — and reveals
+   itself on hover (desktop) or once the card has scrolled into view
+   (touch devices, via IntersectionObserver in theme.js), matching the
+   quick-add-on-interaction pattern rather than always-on controls. */
+.product-card__cart-row {
+  display: flex; align-items: stretch; gap: 8px;
+  margin-top: 0; max-height: 0; opacity: 0; overflow: hidden; pointer-events: none;
+  transition: opacity .25s ease, max-height .25s ease, margin-top .25s ease;
+}
+@media (hover: hover) {
+  .product-card:hover .product-card__cart-row,
+  .product-card:focus-within .product-card__cart-row {
+    margin-top: 12px; max-height: 60px; opacity: 1; pointer-events: auto;
+  }
+}
+.product-card--revealed .product-card__cart-row {
+  margin-top: 12px; max-height: 60px; opacity: 1; pointer-events: auto;
+}
 .product-card__cart-row .qty-stepper { height: 44px; }
 .product-card__cart-row .qty-stepper input { width: 32px; }
 .product-card__add {
