@@ -1,6 +1,8 @@
 {%- comment -%}
   Renders a price, showing compare-at price when the item is on sale.
   Usage: {% render 'price', product: product %} or {% render 'price', variant: variant %}
+  Pass show_savings: true to also render a "Save $X" badge (only ever shows
+  when the item actually has a compare_at_price set — never fabricated).
 {%- endcomment -%}
 {%- liquid
   assign target = variant | default: product
@@ -12,4 +14,7 @@
     <span class="price__compare">{{ compare_at | money }}</span>
   {%- endif -%}
   <span class="price__current">{{ price | money }}</span>
+  {%- if compare_at > price and show_savings -%}
+    <span class="price__savings">Save {{ compare_at | minus: price | money }}</span>
+  {%- endif -%}
 </span>

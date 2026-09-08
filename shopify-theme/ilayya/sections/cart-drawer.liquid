@@ -6,6 +6,26 @@
       <button class="icon-btn" id="CartDrawerClose" aria-label="Close cart">{%- render 'icon' with 'close' -%}</button>
     </div>
 
+    {%- liquid
+      assign free_shipping_threshold_cents = settings.free_shipping_threshold | times: 100
+      assign shipping_remaining_cents = free_shipping_threshold_cents | minus: cart.total_price
+      assign shipping_progress = 0
+      if free_shipping_threshold_cents > 0
+        assign shipping_progress = cart.total_price | times: 100.0 | divided_by: free_shipping_threshold_cents
+        assign shipping_progress = shipping_progress | at_most: 100 | at_least: 0
+      endif
+    -%}
+    {%- if cart.item_count > 0 and settings.free_shipping_bar_enabled and free_shipping_threshold_cents > 0 -%}
+      <div class="cart-drawer__shipping-bar">
+        {%- if shipping_remaining_cents > 0 -%}
+          <p class="cart-drawer__shipping-msg">{%- render 'icon' with 'truck' -%} You're <strong>{{ shipping_remaining_cents | money }}</strong> away from free shipping</p>
+        {%- else -%}
+          <p class="cart-drawer__shipping-msg cart-drawer__shipping-msg--met">{%- render 'icon' with 'truck' -%} You've unlocked free shipping!</p>
+        {%- endif -%}
+        <div class="cart-drawer__progress"><div class="cart-drawer__progress-fill" style="width: {{ shipping_progress }}%;"></div></div>
+      </div>
+    {%- endif -%}
+
     <div class="cart-drawer__body" id="CartDrawerBody">
       {%- if cart.item_count == 0 -%}
         <div class="cart-drawer__empty">
@@ -26,7 +46,7 @@
                 {%- if item.variant.title != 'Default Title' -%}
                   <p class="cart-drawer__item-variant">{{ item.variant.title }}</p>
                 {%- endif -%}
-                {%- render 'price', variant: item.variant -%}
+                {%- render 'price', variant: item.variant, show_savings: true -%}
                 <div class="cart-drawer__qty" data-line="{{ forloop.index }}">
                   <button class="qty-btn" data-action="decrease" aria-label="Decrease quantity">{%- render 'icon' with 'minus' -%}</button>
                   <span class="qty-value">{{ item.quantity }}</span>
@@ -48,7 +68,19 @@
         </div>
         <p class="cart-drawer__note">Shipping and taxes calculated at checkout.</p>
         <a href="{{ routes.cart_url }}" class="btn btn--outline">View bag</a>
-        <a href="{{ routes.cart_url }}/checkout" class="btn btn--primary">Checkout</a>
+        <a href="{{ routes.cart_url }}/checkout" class="btn btn--primary">Checkout &bull; {{ cart.total_price | money }}</a>
+        {%- comment -%}
+          Payment icons mirror the footer's pattern: whichever methods the
+          merchant has enabled under Settings > Payments, never hardcoded.
+        {%- endcomment -%}
+        {%- assign payment_types = shop.enabled_payment_types -%}
+        {%- if payment_types.size > 0 -%}
+          <div class="cart-drawer__payments">
+            {%- for type in payment_types -%}
+              {{ type | payment_type_svg_tag: class: 'cart-drawer__payment-icon' }}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
       </div>
     {%- endif -%}
   </div>

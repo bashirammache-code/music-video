@@ -38,6 +38,13 @@
     ]
   },
   {
+    "name": "Cart",
+    "settings": [
+      { "type": "checkbox", "id": "free_shipping_bar_enabled", "label": "Show free shipping progress bar in cart", "default": true },
+      { "type": "number", "id": "free_shipping_threshold", "label": "Free shipping threshold ($)", "info": "Cart subtotal needed to unlock free shipping.", "default": 75 }
+    ]
+  },
+  {
     "name": "Announcement bar",
     "settings": [
       { "type": "checkbox", "id": "signup_popup_enabled", "label": "Show first-order discount pop-up", "default": true }
