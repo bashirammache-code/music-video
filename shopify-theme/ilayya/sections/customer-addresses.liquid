@@ -14,7 +14,7 @@
       <div class="address-form-wrap" data-address-form="new" hidden>
         {%- form 'customer_address', customer.new_address, id: 'AddressNewForm' -%}
           {%- if form.errors -%}<div class="errors">{{ form.errors | default_errors }}</div>{%- endif -%}
-          {%- render 'address-fields', form: form, address: form.address, country_option_tags: country_option_tags -%}
+          {%- render 'address-fields', id_prefix: 'AddressNew', address: form.address, country_option_tags: country_option_tags -%}
           <div class="address-form__actions">
             <button type="submit" class="btn btn--primary">Save Address</button>
             <button type="button" class="btn btn--outline" data-address-toggle="new">Cancel</button>
@@ -41,7 +41,7 @@
                 {%- assign address_form_id = 'AddressForm' | append: address.id -%}
                 {%- form 'customer_address', address, id: address_form_id -%}
                   {%- if form.errors -%}<div class="errors">{{ form.errors | default_errors }}</div>{%- endif -%}
-                  {%- render 'address-fields', form: form, address: address, country_option_tags: country_option_tags -%}
+                  {%- render 'address-fields', id_prefix: address_form_id, address: address, country_option_tags: country_option_tags -%}
                   {%- unless address == customer.default_address -%}
                     <label class="address-form__checkbox">
                       <input type="checkbox" name="address[default]" value="1">
