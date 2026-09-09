@@ -96,7 +96,7 @@
             data-product-title="{{ product.title | escape }}"
             {% unless current_variant.available %}disabled{% endunless %}>
             <span id="AddToCartText">
-              {%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+              {%- if current_variant.available -%}{{ 'products.product.add_to_cart' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
             </span>
           </button>
         </div>

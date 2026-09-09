@@ -1,10 +1,10 @@
 <div class="cart-page section-padding">
   <div class="container">
-    <h1 class="cart-page__title">Your Bag</h1>
+    <h1 class="cart-page__title">{{ 'cart.general.title' | t }}</h1>
 
     {%- if cart.item_count == 0 -%}
       <div class="cart-page__empty">
-        <p>Your cart is currently empty.</p>
+        <p>{{ 'cart.general.empty' | t }}</p>
         <a href="{{ routes.root_url }}#shop" class="btn btn--primary">Shop Here</a>
       </div>
     {%- else -%}

@@ -1,0 +1,20 @@
+{
+  "general": {
+    "search": {
+      "placeholder": "ابحث عن المجوهرات"
+    }
+  },
+  "products": {
+    "product": {
+      "sold_out": "نفدت الكمية",
+      "add_to_cart": "أضف إلى السلة",
+      "unavailable": "غير متوفر"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "حقيبتك",
+      "empty": "سلتك فارغة حالياً."
+    }
+  }
+}

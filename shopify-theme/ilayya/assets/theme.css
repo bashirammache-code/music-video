@@ -78,6 +78,11 @@ p { margin: 0; }
 .icon-btn { position: relative; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text); }
 .icon-btn svg { width: 20px; height: 20px; }
 
+.language-switcher select {
+  border: none; background: none; font: inherit; font-size: .72rem; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--color-text); cursor: pointer; padding: 0;
+}
+
 /* ---------- Announcement bar (rotating promo messages) ---------- */
 .announcement-bar { position: relative; background: var(--color-accent); color: var(--color-background); min-height: 32px; }
 .announcement-bar__message {
@@ -902,3 +907,11 @@ p { margin: 0; }
   html { scroll-behavior: auto; }
   .announcement-bar__message, .quick-add, .cross-sell__arrow, .gallery-arrow, .site-nav__dropdown { transition: none; }
 }
+
+/* ---------- RTL (Arabic) ----------
+   Flexbox/Grid direction already mirrors automatically from the <html
+   dir="rtl"> the layout sets per-locale — this only overrides the spots
+   that use *physical* left/right positioning, which don't auto-flip.
+   This is a starting point (the drawers + language switcher icon), not a
+   full RTL audit of every left/right declaration in this file. */
+[dir="rtl"] .cart-drawer__panel { left: 0; right: auto; box-shadow: 12px 0 40px rgba(0,0,0,.12); }

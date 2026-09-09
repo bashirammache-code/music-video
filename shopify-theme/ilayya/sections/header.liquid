@@ -14,6 +14,21 @@
     </a>
 
     <div class="site-header__icons">
+      {%- if localization.available_languages.size > 1 -%}
+        {%- comment -%}
+          Only shows once a second language is actually published under
+          Settings > Languages — one language on the store hides this
+          entirely rather than rendering a useless single-option picker.
+        {%- endcomment -%}
+        {%- form 'localization', id: 'HeaderLanguageForm', class: 'language-switcher' -%}
+          <label for="HeaderLanguageSelect" class="visually-hidden">Language</label>
+          <select name="locale_code" id="HeaderLanguageSelect" onchange="this.form.submit()">
+            {%- for language in localization.available_languages -%}
+              <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>{{ language.endonym_name | capitalize }}</option>
+            {%- endfor -%}
+          </select>
+        {%- endform -%}
+      {%- endif -%}
       <button class="icon-btn" id="SearchToggle" aria-label="Search" aria-expanded="false" aria-controls="SearchDrawer">
         {%- render 'icon' with 'search' -%}
       </button>
@@ -60,7 +75,7 @@
     <div class="search-drawer__backdrop" id="SearchBackdrop"></div>
     <div class="search-drawer__panel">
       <form action="{{ routes.search_url }}" method="get" role="search" class="search-drawer__form container">
-        <input type="search" name="q" id="SearchInput" placeholder="Search jewelry" value="{{ search.terms | escape }}" aria-label="Search" autocomplete="off">
+        <input type="search" name="q" id="SearchInput" placeholder="{{ 'general.search.placeholder' | t }}" value="{{ search.terms | escape }}" aria-label="Search" autocomplete="off">
         <input type="hidden" name="type" value="product">
         <button type="submit">{%- render 'icon' with 'search' -%}</button>
         <button type="button" class="search-drawer__close" id="SearchClose" aria-label="Close search">{%- render 'icon' with 'close' -%}</button>

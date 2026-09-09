@@ -52,10 +52,10 @@
           data-variant-id="{{ product.selected_or_first_available_variant.id }}"
           data-product-title="{{ product.title | escape }}"
           data-product-price="{{ product.price | money }}"
-        >Add to Cart</button>
+        >{{ 'products.product.add_to_cart' | t }}</button>
       </div>
     {%- else -%}
-      <p class="product-card__soldout">Sold Out</p>
+      <p class="product-card__soldout">{{ 'products.product.sold_out' | t }}</p>
     {%- endif -%}
   </div>
 </div>
