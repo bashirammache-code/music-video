@@ -7,7 +7,7 @@
 -%}
 <div
   class="hero-slideshow"
-  style="--hero-height: {{ section.settings.height }}px;"
+  style="--hero-height: {{ section.settings.height }}px; --hero-progress-duration: {{ section.settings.autoplay_seconds }}s;"
   data-hero-slideshow
   data-autoplay-seconds="{{ section.settings.autoplay_seconds }}">
   <div class="hero-slideshow__track" data-hero-track>
@@ -52,16 +52,28 @@
       <p class="hero__subheading">{{ section.settings.subheading }}</p>
     {%- endif -%}
     {%- if section.settings.button_label != blank -%}
-      <a href="{{ section.settings.button_url }}" class="btn btn--primary btn--light">{{ section.settings.button_label }}</a>
+      {%- comment -%}
+        Falls back to the all-products page when no link is set in the
+        theme editor, so the button always goes somewhere useful.
+      {%- endcomment -%}
+      <a href="{{ section.settings.button_url | default: routes.all_products_collection_url }}" class="btn btn--primary btn--light">{{ section.settings.button_label }}</a>
     {%- endif -%}
   </div>
 
   {%- if slide_count > 1 -%}
     <button type="button" class="hero-slideshow__arrow hero-slideshow__arrow--prev" data-hero-prev aria-label="Previous slide">&#8249;</button>
     <button type="button" class="hero-slideshow__arrow hero-slideshow__arrow--next" data-hero-next aria-label="Next slide">&#8250;</button>
+    {%- comment -%}
+      Segmented progress bar (Instagram-story style) instead of plain dots:
+      the active segment fills over the autoplay duration, past segments
+      stay full, upcoming ones stay empty — updateDots() in theme.js
+      manages the is-viewed/is-active/is-upcoming classes on navigation.
+    {%- endcomment -%}
     <div class="hero-slideshow__dots" data-hero-dots>
       {%- for i in (1..slide_count) -%}
-        <button type="button" class="hero-slideshow__dot{% if forloop.first %} is-active{% endif %}" data-hero-dot data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"></button>
+        <button type="button" class="hero-slideshow__dot{% if forloop.first %} is-active{% endif %}" data-hero-dot data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}">
+          <span class="hero-slideshow__dot-fill"></span>
+        </button>
       {%- endfor -%}
     </div>
   {%- endif -%}

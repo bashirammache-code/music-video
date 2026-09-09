@@ -256,12 +256,22 @@ p { margin: 0; }
 .hero-slideshow__arrow--prev { left: 20px; }
 .hero-slideshow__arrow--next { right: 20px; }
 
-.hero-slideshow__dots { position: absolute; z-index: 3; bottom: 22px; left: 0; right: 0; display: flex; justify-content: center; gap: 10px; }
+/* Segmented progress bar under the hero (Instagram-story style): each
+   segment is a thin track with an inner fill. The active segment's fill
+   animates 0 -> 100% over --hero-progress-duration (the autoplay
+   interval); past segments sit fully filled, upcoming ones stay empty. */
+.hero-slideshow__dots { position: absolute; z-index: 3; bottom: 22px; left: 24px; right: 24px; display: flex; gap: 6px; }
 .hero-slideshow__dot {
-  width: 8px; height: 8px; border-radius: 50%; padding: 0; border: 1px solid rgba(246,244,241,.8);
-  background: rgba(246,244,241,.35); cursor: pointer; transition: background .2s ease, transform .2s ease;
+  flex: 1; height: 2px; padding: 0; border: none; background: rgba(246,244,241,.35);
+  cursor: pointer; position: relative; overflow: hidden;
 }
-.hero-slideshow__dot.is-active { background: var(--color-background); transform: scale(1.15); }
+.hero-slideshow__dot-fill {
+  position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--color-background);
+}
+.hero-slideshow__dot.is-viewed .hero-slideshow__dot-fill { width: 100%; }
+.hero-slideshow__dot.is-active .hero-slideshow__dot-fill {
+  width: 100%; transition: width var(--hero-progress-duration, 0s) linear;
+}
 
 @media (max-width: 749px) {
   .hero__content { left: 24px; right: 24px; }
