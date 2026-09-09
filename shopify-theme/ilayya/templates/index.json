@@ -65,12 +65,21 @@
             "label": "Bracelets",
             "collection": "516795662617"
           }
+        },
+        "hand-chains": {
+          "type": "category",
+          "settings": {
+            "icon": "category-hand-chain",
+            "label": "Hand Chains",
+            "collection": "517157847321"
+          }
         }
       },
       "block_order": [
         "earrings",
         "necklaces",
-        "bracelets"
+        "bracelets",
+        "hand-chains"
       ],
       "settings": {}
     },
@@ -109,12 +118,20 @@
             "label": "Necklaces",
             "collection": "516795695385"
           }
+        },
+        "hand-chains": {
+          "type": "category",
+          "settings": {
+            "label": "Hand Chains",
+            "collection": "517157847321"
+          }
         }
       },
       "block_order": [
         "earrings",
         "bracelets",
-        "necklaces"
+        "necklaces",
+        "hand-chains"
       ],
       "settings": {
         "heading": "Shop by Category"

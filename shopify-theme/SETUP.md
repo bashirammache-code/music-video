@@ -70,13 +70,15 @@ push to the connected branch updates the theme automatically.
 
 ## 4. Create collections
 
-The theme's nav and homepage category tiles expect exactly these three
-collections — matching the Earrings / Bracelets / Necklaces categories in
-the design:
+The theme's nav and homepage category tiles expect these four collections
+— matching the Earrings / Bracelets / Necklaces / Hand Chains categories in
+the design. **All four already exist on the connected store and are wired
+into the nav and homepage category blocks** — this section is reference for
+rebuilding them elsewhere or understanding the setup:
 
 1. **Products → Collections → Create collection**
-2. Make these (all as **Automated** collections), with these exact handles
-   so the nav links line up:
+2. Made as **Automated** collections (except Hand Chains, made manually),
+   with these exact handles so the nav links line up:
    - **Earrings** — condition: Product type is equal to `Earrings` → handle
      it as `earrings`
    - **Bracelets** — condition: Product type is equal to `Bracelets` →
@@ -85,10 +87,13 @@ the design:
      one, matching the "coming soon" state in the preview)
    - **Necklaces** — condition: Product type is equal to `Necklaces` →
      handle it as `necklaces`
-3. In the theme editor (next step), point the **Category tiles** section's
-   three blocks at Earrings/Bracelets/Necklaces, and set the homepage's
-   **Featured collection** section to whichever collection you want
-   spotlighted (e.g. a "New Arrivals" collection if you create one).
+   - **Hand Chains** — a manual collection (handle `hand-amp-finger-chains`)
+     since "hand chain" isn't a distinct product type yet; add products to
+     it directly, or switch it to automated once you tag/type them
+     consistently.
+3. In the theme editor, the **Category tiles** and **Shop by Category**
+   sections' four blocks are already pointed at these collections, and the
+   header's **Jewelry** dropdown links to all four.
 
 ## 5. Set up navigation
 
