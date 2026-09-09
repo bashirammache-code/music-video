@@ -1,5 +1,10 @@
 {%- assign current_variant = product.selected_or_first_available_variant -%}
 {%- assign product_type_handle = product.type | handleize -%}
+{%- assign has_size_option = false -%}
+{%- for option_name in product.options -%}
+  {%- assign option_name_down = option_name | downcase -%}
+  {%- if option_name_down contains 'size' -%}{%- assign has_size_option = true -%}{%- endif -%}
+{%- endfor -%}
 <div class="product section-padding">
   <div class="container">
     {%- render 'breadcrumbs' -%}
@@ -52,7 +57,24 @@
         <h1 class="product__title">{{ product.title }}</h1>
         {%- render 'wishlist-button', product: product, modifier: 'inline' -%}
       </div>
-      <div id="ProductPrice">{%- render 'price', variant: current_variant -%}</div>
+
+      <div class="product__price-row">
+        <div id="ProductPrice">{%- render 'price', variant: current_variant -%}</div>
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <span class="product__sale-badge" id="ProductSaleBadge">Sale</span>
+        {%- endif -%}
+      </div>
+      {%- comment -%}
+        Real link to the shop's shipping policy when one exists, rather than
+        a generic claim — falls back to plain (non-linked) text otherwise.
+      {%- endcomment -%}
+      <p class="product__shipping-note">
+        {%- if shop.shipping_policy -%}
+          <a href="{{ shop.shipping_policy.url }}">Shipping</a> calculated at checkout.
+        {%- else -%}
+          Shipping calculated at checkout.
+        {%- endif -%}
+      </p>
 
       {%- if product.metafields.reviews.rating -%}
         <div class="product__rating">
@@ -65,22 +87,75 @@
 
         {%- unless product.has_only_default_variant -%}
           {%- for option in product.options_with_values -%}
+            {%- assign option_name_down = option.name | downcase -%}
+            {%- assign is_color_option = false -%}
+            {%- if option_name_down contains 'color' or option_name_down contains 'colour' -%}
+              {%- assign is_color_option = true -%}
+            {%- endif -%}
             <div class="product__option" data-option-position="{{ option.position }}">
-              <label class="product__option-label">{{ option.name }}</label>
-              <div class="product__option-values">
-                {%- for value in option.values -%}
-                  <button
-                    type="button"
-                    class="option-pill{% if value == option.selected_value %} is-selected{% endif %}"
-                    data-option-position="{{ option.position }}"
-                    data-option-value="{{ value | escape }}">
-                    {{ value }}
+              <div class="product__option-head">
+                <label class="product__option-label">
+                  {{ option.name }}{% if option.selected_value %} <span class="product__option-value">&mdash; {{ option.selected_value }}</span>{% endif %}
+                </label>
+                {%- if has_size_option and option_name_down contains 'size' and section.settings.show_size_guide -%}
+                  <button type="button" class="size-guide-trigger" id="SizeGuideTrigger" aria-label="Size guide">
+                    {%- render 'icon' with 'ruler' -%}
                   </button>
+                {%- endif -%}
+              </div>
+              <div class="product__option-values{% if is_color_option %} product__option-values--swatch{% endif %}">
+                {%- for value in option.values -%}
+                  {%- if is_color_option -%}
+                    {%- assign option_key = 'option' | append: option.position -%}
+                    {%- assign swatch_variant = product.variants | where: option_key, value | first -%}
+                    <button
+                      type="button"
+                      class="option-pill option-pill--swatch{% if value == option.selected_value %} is-selected{% endif %}"
+                      data-option-position="{{ option.position }}"
+                      data-option-value="{{ value | escape }}"
+                      aria-label="{{ value }}">
+                      {%- if swatch_variant.featured_image -%}
+                        <img src="{{ swatch_variant.featured_image | image_url: width: 80 }}" alt="{{ value | escape }}" loading="lazy" width="40" height="40">
+                      {%- else -%}
+                        <span class="option-pill__swatch-fallback">{{ value | slice: 0 }}</span>
+                      {%- endif -%}
+                    </button>
+                  {%- else -%}
+                    <button
+                      type="button"
+                      class="option-pill{% if value == option.selected_value %} is-selected{% endif %}"
+                      data-option-position="{{ option.position }}"
+                      data-option-value="{{ value | escape }}">
+                      {{ value }}
+                    </button>
+                  {%- endif -%}
                 {%- endfor -%}
               </div>
             </div>
           {%- endfor -%}
         {%- endunless -%}
+
+        {%- if current_variant.sku != blank -%}
+          <p class="product__sku" id="ProductSku">SKU: {{ current_variant.sku }}</p>
+        {%- endif -%}
+
+        {%- comment -%}
+          Only ever reflects real tracked inventory — hidden entirely for
+          products without inventory tracking, or once stock is above the
+          merchant's own "low stock" threshold. Never a fabricated number.
+        {%- endcomment -%}
+        {%- if section.settings.low_stock_threshold > 0 and current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity <= section.settings.low_stock_threshold and current_variant.inventory_quantity > 0 -%}
+          {%- assign stock_percent = current_variant.inventory_quantity | times: 100.0 | divided_by: section.settings.low_stock_threshold | at_most: 100 -%}
+          <div class="product__stock-alert" id="ProductStockAlert" data-threshold="{{ section.settings.low_stock_threshold }}">
+            <p>Hurry, only {{ current_variant.inventory_quantity }} left in stock!</p>
+            <div class="product__stock-bar"><div class="product__stock-bar-fill" style="width: {{ stock_percent }}%;"></div></div>
+          </div>
+        {%- else -%}
+          <div class="product__stock-alert" id="ProductStockAlert" data-threshold="{{ section.settings.low_stock_threshold }}" hidden>
+            <p></p>
+            <div class="product__stock-bar"><div class="product__stock-bar-fill"></div></div>
+          </div>
+        {%- endif -%}
 
         <div class="product__add-row">
           <div class="qty-stepper">
@@ -100,26 +175,75 @@
             </span>
           </button>
         </div>
+
+        {%- if section.settings.show_buy_now and current_variant.available -%}
+          <div class="product__buy-now">
+            {{ form | payment_button }}
+          </div>
+        {%- endif -%}
       {%- endform -%}
 
-      {%- if product.description != blank -%}
-        <div class="product__desc">{{ product.description }}</div>
-      {%- endif -%}
-
       <div class="product__accordion">
-        <details>
-          <summary>Materials &amp; Care</summary>
-          <div class="product__accordion-content">
-            <p>{{ section.settings.materials_text }}</p>
-          </div>
-        </details>
-        <details>
-          <summary>Shipping &amp; Returns</summary>
-          <div class="product__accordion-content">
-            <p>{{ section.settings.shipping_text }}</p>
-          </div>
-        </details>
+        {%- if product.description != blank -%}
+          <details open>
+            <summary>Description</summary>
+            <div class="product__accordion-content rte">{{ product.description }}</div>
+          </details>
+        {%- endif -%}
+        {%- if section.settings.features_text != blank -%}
+          <details>
+            <summary>Product Features</summary>
+            <div class="product__accordion-content rte">{{ section.settings.features_text }}</div>
+          </details>
+        {%- endif -%}
+        {%- if section.settings.composition_text != blank -%}
+          <details>
+            <summary>Composition</summary>
+            <div class="product__accordion-content rte">{{ section.settings.composition_text }}</div>
+          </details>
+        {%- endif -%}
+        {%- if section.settings.care_text != blank -%}
+          <details>
+            <summary>Care Guide</summary>
+            <div class="product__accordion-content rte">{{ section.settings.care_text }}</div>
+          </details>
+        {%- endif -%}
       </div>
+
+      <button type="button" class="product__share" id="ProductShare" data-product-title="{{ product.title | escape }}">
+        {%- render 'icon' with 'share' -%}
+        Share
+      </button>
+    </div>
+  </div>
+
+  {%- if section.settings.show_size_guide and has_size_option -%}
+    <div class="modal" id="SizeGuideModal" hidden>
+      <div class="modal__backdrop" id="SizeGuideBackdrop"></div>
+      <div class="modal__box" role="dialog" aria-modal="true" aria-label="Size Guide">
+        <button type="button" class="modal__close" id="SizeGuideClose" aria-label="Close">&times;</button>
+        <h2>Size Guide</h2>
+        <div class="rte">{{ section.settings.size_guide_text }}</div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%}
+    Sticky mobile add-to-cart bar: mirrors the main Add to Cart row, shown
+    once the shopper scrolls past it (initStickyAddToCart in theme.js).
+  {%- endcomment -%}
+  <div class="sticky-add-to-cart" id="StickyAddToCart" hidden>
+    <div class="sticky-add-to-cart__inner container">
+      {%- if product.featured_image -%}
+        <img src="{{ product.featured_image | image_url: width: 100 }}" alt="" class="sticky-add-to-cart__thumb" width="44" height="44">
+      {%- endif -%}
+      <div class="sticky-add-to-cart__info">
+        <p class="sticky-add-to-cart__title">{{ product.title }}</p>
+        <p class="sticky-add-to-cart__price" id="StickyAddToCartPrice">{{ current_variant.price | money }}</p>
+      </div>
+      <button type="button" class="btn btn--primary sticky-add-to-cart__btn" id="StickyAddToCartBtn">
+        {%- if current_variant.available -%}{{ 'products.product.add_to_cart' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+      </button>
     </div>
   </div>
 
@@ -147,6 +271,15 @@
       if (window.Ilayya && window.Ilayya.initCrossSell) {
         window.Ilayya.initCrossSell();
       }
+      if (window.Ilayya && window.Ilayya.initStickyAddToCart) {
+        window.Ilayya.initStickyAddToCart();
+      }
+      if (window.Ilayya && window.Ilayya.initSizeGuide) {
+        window.Ilayya.initSizeGuide();
+      }
+      if (window.Ilayya && window.Ilayya.initProductShare) {
+        window.Ilayya.initProductShare();
+      }
     });
   </script>
 </div>
@@ -155,8 +288,13 @@
 {
   "name": "Product information",
   "settings": [
-    { "type": "textarea", "id": "materials_text", "label": "Materials & care text", "default": "Made from 316L stainless steel with PVD gold plating. Nickel-free and hypoallergenic — safe for sensitive skin, designed to last." },
-    { "type": "textarea", "id": "shipping_text", "label": "Shipping & returns text", "default": "Free shipping on orders over $75. Easy 14-day returns on unworn pieces. (placeholder — final policy pending)" }
+    { "type": "textarea", "id": "features_text", "label": "Product features", "default": "316L stainless steel construction\nPVD gold plating for lasting shine\nNickel-free and hypoallergenic\nWater and tarnish resistant" },
+    { "type": "textarea", "id": "composition_text", "label": "Composition", "default": "Made from 316L stainless steel with PVD gold plating. Nickel-free and hypoallergenic — safe for sensitive skin, designed to last." },
+    { "type": "textarea", "id": "care_text", "label": "Care guide", "default": "Avoid contact with water, perfume, and lotion. Store in the pouch when not worn, and wipe gently with a soft cloth to keep it looking new." },
+    { "type": "number", "id": "low_stock_threshold", "label": "Low stock threshold", "info": "\"Hurry, only X left!\" shows once a variant's real tracked inventory drops to or below this number. Never shown for untracked inventory.", "default": 5 },
+    { "type": "checkbox", "id": "show_buy_now", "label": "Show accelerated \"Buy it now\" checkout button", "default": true },
+    { "type": "checkbox", "id": "show_size_guide", "label": "Show size guide (only on products with a Size option)", "default": true },
+    { "type": "richtext", "id": "size_guide_text", "label": "Size guide content", "default": "<p>Ring sizes run true to standard US sizing. If you're between sizes, we recommend sizing up. Bracelet and necklace lengths are listed in each product's description.</p>" }
   ]
 }
 {% endschema %}

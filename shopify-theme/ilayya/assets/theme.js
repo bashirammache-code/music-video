@@ -446,6 +446,12 @@
     var priceWrap = qs('#ProductPrice');
     var addBtn = qs('#AddToCart');
     var addText = qs('#AddToCartText');
+    var saleBadge = qs('#ProductSaleBadge');
+    var skuEl = qs('#ProductSku');
+    var stockAlert = qs('#ProductStockAlert');
+    var stickyPrice = qs('#StickyAddToCartPrice');
+    var stickyThumb = qs('.sticky-add-to-cart__thumb');
+    var stickyBtn = qs('#StickyAddToCartBtn');
 
     function currentSelection() {
       var selection = [];
@@ -470,14 +476,15 @@
     function updateForVariant(variant) {
       if (!variant) return;
       hiddenInput.value = variant.id;
+      var onSale = variant.compare_at_price && variant.compare_at_price > variant.price;
 
       if (priceWrap) {
-        var compareHtml = variant.compare_at_price && variant.compare_at_price > variant.price
-          ? '<span class="price__compare">' + renderMoney(variant.compare_at_price) + '</span>'
-          : '';
+        var compareHtml = onSale ? '<span class="price__compare">' + renderMoney(variant.compare_at_price) + '</span>' : '';
         priceWrap.innerHTML = '<span class="price' + (compareHtml ? ' price--sale' : '') + '">' +
           compareHtml + '<span class="price__current">' + renderMoney(variant.price) + '</span></span>';
       }
+      if (saleBadge) saleBadge.hidden = !onSale;
+      if (stickyPrice) stickyPrice.textContent = renderMoney(variant.price);
 
       if (addBtn) {
         if (variant.available) {
@@ -488,21 +495,108 @@
           if (addText) addText.textContent = 'Sold Out';
         }
       }
+      if (stickyBtn) stickyBtn.textContent = variant.available ? 'Add to Cart' : 'Sold Out';
+
+      if (skuEl) {
+        if (variant.sku) { skuEl.textContent = 'SKU: ' + variant.sku; skuEl.hidden = false; } else { skuEl.hidden = true; }
+      }
+
+      if (stockAlert) {
+        var threshold = parseInt(stockAlert.getAttribute('data-threshold'), 10) || 0;
+        var qty = variant.inventory_quantity;
+        var showAlert = threshold > 0 && variant.inventory_management === 'shopify' && qty > 0 && qty <= threshold;
+        stockAlert.hidden = !showAlert;
+        if (showAlert) {
+          var p = qs('p', stockAlert);
+          var fill = qs('.product__stock-bar-fill', stockAlert);
+          if (p) p.textContent = 'Hurry, only ' + qty + ' left in stock!';
+          if (fill) fill.style.width = Math.min(100, (qty / threshold) * 100) + '%';
+        }
+      }
 
       if (variant.featured_media) {
         selectGalleryImage(variant.featured_media.id);
+        var activeImg = qs('.product__gallery-image.is-active');
+        if (stickyThumb && activeImg) stickyThumb.src = activeImg.src;
       }
     }
 
     pillGroups.forEach(function (group) {
+      var label = qs('.product__option-value', group);
       group.addEventListener('click', function (e) {
         var pill = e.target.closest('.option-pill');
         if (!pill) return;
         qsa('.option-pill', group).forEach(function (p) { p.classList.remove('is-selected'); });
         pill.classList.add('is-selected');
+        if (label) label.textContent = '— ' + pill.getAttribute('data-option-value');
         var variant = findVariant(currentSelection());
         updateForVariant(variant);
       });
+    });
+
+    if (stickyBtn) {
+      stickyBtn.addEventListener('click', function () {
+        var form = qs('#ProductForm');
+        if (form && typeof form.requestSubmit === 'function') form.requestSubmit();
+        else if (addBtn) addBtn.click();
+      });
+    }
+  };
+
+  /* ---------- Sticky mobile add-to-cart bar: shown once the real add-to-cart
+     row scrolls out of view. ---------- */
+  Ilayya.initStickyAddToCart = function () {
+    var bar = qs('#StickyAddToCart');
+    var addRow = qs('.product__add-row');
+    if (!bar || !addRow) return;
+    bar.hidden = false;
+
+    if (!('IntersectionObserver' in window)) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        bar.classList.toggle('is-visible', !entry.isIntersecting && entry.boundingClientRect.top < 0);
+      });
+    }, { threshold: 0 });
+    observer.observe(addRow);
+  };
+
+  /* ---------- Size guide modal ---------- */
+  Ilayya.initSizeGuide = function () {
+    var trigger = qs('#SizeGuideTrigger');
+    var modal = qs('#SizeGuideModal');
+    if (!trigger || !modal) return;
+    var backdrop = qs('#SizeGuideBackdrop');
+    var closeBtn = qs('#SizeGuideClose');
+
+    function open() { modal.hidden = false; }
+    function close() { modal.hidden = true; }
+
+    trigger.addEventListener('click', function (e) { e.preventDefault(); open(); });
+    if (backdrop) backdrop.addEventListener('click', close);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) close();
+    });
+  };
+
+  /* ---------- Product share: native share sheet, clipboard fallback ---------- */
+  Ilayya.initProductShare = function () {
+    var btn = qs('#ProductShare');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var title = btn.getAttribute('data-product-title') || document.title;
+      var url = window.location.href;
+      if (navigator.share) {
+        navigator.share({ title: title, url: url }).catch(function () { /* user cancelled: no-op */ });
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          var original = btn.textContent;
+          btn.textContent = 'Link copied';
+          setTimeout(function () { btn.innerHTML = original; }, 1800);
+        }).catch(function () { /* clipboard unavailable: silently do nothing further */ });
+      }
     });
   };
 
