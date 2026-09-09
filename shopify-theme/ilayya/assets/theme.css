@@ -264,10 +264,12 @@ p { margin: 0; }
 /* Segmented progress bar under the hero (Instagram-story style): each
    segment is a thin track with an inner fill. The active segment's fill
    animates 0 -> 100% over --hero-progress-duration (the autoplay
-   interval); past segments sit fully filled, upcoming ones stay empty. */
-.hero-slideshow__dots { position: absolute; z-index: 3; bottom: 22px; left: 24px; right: 24px; display: flex; gap: 6px; }
+   interval); past segments sit fully filled, upcoming ones stay empty.
+   Small, fixed-width pills clustered in the center — not stretched
+   full-width — so it stays a subtle indicator rather than a big bar. */
+.hero-slideshow__dots { position: absolute; z-index: 3; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
 .hero-slideshow__dot {
-  flex: 1; height: 2px; padding: 0; border: none; background: rgba(246,244,241,.35);
+  flex: none; width: 28px; height: 3px; border-radius: 2px; padding: 0; border: none; background: rgba(246,244,241,.35);
   cursor: pointer; position: relative; overflow: hidden;
 }
 .hero-slideshow__dot-fill {
@@ -340,36 +342,6 @@ p { margin: 0; }
   color: var(--color-accent); background: rgba(141,11,11,.08); padding: 2px 6px;
 }
 
-/* Add to cart row on each product card: qty stepper + Add to Cart button,
-   same look as the product page's add-to-cart row. Stays hidden — no
-   permanent quantity/add-to-cart clutter under every tile — and reveals
-   itself on hover (desktop) or once the card has scrolled into view
-   (touch devices, via IntersectionObserver in theme.js), matching the
-   quick-add-on-interaction pattern rather than always-on controls. */
-.product-card__cart-row {
-  display: flex; align-items: stretch; gap: 8px;
-  margin-top: 0; max-height: 0; opacity: 0; overflow: hidden; pointer-events: none;
-  transition: opacity .25s ease, max-height .25s ease, margin-top .25s ease;
-}
-@media (hover: hover) {
-  .product-card:hover .product-card__cart-row,
-  .product-card:focus-within .product-card__cart-row {
-    margin-top: 12px; max-height: 60px; opacity: 1; pointer-events: auto;
-  }
-}
-.product-card--revealed .product-card__cart-row {
-  margin-top: 12px; max-height: 60px; opacity: 1; pointer-events: auto;
-}
-.product-card__cart-row .qty-stepper { height: 44px; }
-.product-card__cart-row .qty-stepper input { width: 32px; }
-.product-card__add {
-  flex: 1; height: 44px; background: var(--color-frame); color: var(--color-text);
-  border: 1px solid var(--color-border); font-family: var(--font-body); font-weight: 700;
-  font-size: .7rem; letter-spacing: .09em; text-transform: uppercase; cursor: pointer;
-  transition: background .2s ease;
-}
-.product-card__add:hover { background: var(--color-border); }
-.product-card__add[disabled] { opacity: .4; cursor: not-allowed; }
 .product-card__soldout { margin-top: 12px; font-size: .78rem; opacity: .5; text-transform: uppercase; letter-spacing: .08em; }
 
 /* ---------- Wishlist heart toggle ---------- */

@@ -79,7 +79,6 @@
 
       <div class="collection__main">
         <div class="collection__toolbar">
-          <p class="collection__count">{{ collection.products_count }} product{% if collection.products_count != 1 %}s{% endif %}</p>
           <div class="collection__toolbar-actions">
             <label for="SortBy" class="visually-hidden">Sort by</label>
             <div class="select-box">
@@ -90,6 +89,7 @@
               </select>
             </div>
           </div>
+          <p class="collection__count">{{ collection.products_count }} product{% if collection.products_count != 1 %}s{% endif %}</p>
         </div>
 
         {%- if active_filter_count > 0 -%}
