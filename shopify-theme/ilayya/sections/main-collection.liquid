@@ -11,7 +11,9 @@
     {%- comment -%}
       One GET form carries both sort and every filter param together, so
       changing sort never drops active filters (and vice versa) — matches
-      collection.filters (Shopify's built-in storefront filtering).
+      collection.filters (Shopify's built-in storefront filtering). Layout
+      follows a reference: a persistent left sidebar of filter sections
+      rather than a drawer, "Sort By" as a boxed dropdown top-right.
     {%- endcomment -%}
     {%- assign active_filter_count = 0 -%}
     {%- for filter in collection.filters -%}
@@ -23,128 +25,110 @@
       {%- endif -%}
     {%- endfor -%}
 
-    <form method="get" action="{{ collection.url }}" id="FacetFiltersForm">
-      <div class="collection__toolbar">
-        <p class="collection__count">{{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}</p>
-        <div class="collection__toolbar-actions">
-          {%- if collection.filters.size > 0 -%}
-            <button type="button" class="collection__filter-toggle" id="FilterToggle" aria-expanded="false" aria-controls="FilterDrawer">
-              Filter By{% if active_filter_count > 0 %} ({{ active_filter_count }}){% endif %}
-            </button>
+    <form method="get" action="{{ collection.url }}" id="FacetFiltersForm" class="collection__layout">
+      {%- if collection.filters.size > 0 -%}
+        <aside class="collection__sidebar">
+          {%- if active_filter_count > 0 -%}
+            <a href="{{ collection.url }}" class="collection__reset-all">Reset all filters</a>
           {%- endif -%}
-          <label for="SortBy" class="visually-hidden">Sort by</label>
-          <select name="sort_by" id="SortBy" onchange="this.form.submit()">
-            {%- for option in collection.sort_options -%}
-              <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name }}</option>
-            {%- endfor -%}
-          </select>
-        </div>
-      </div>
-
-      {%- if active_filter_count > 0 -%}
-        <div class="active-filters">
           {%- for filter in collection.filters -%}
-            {%- for value in filter.active_values -%}
-              <a href="{{ value.url_to_remove }}" class="active-filter-chip">{{ value.label }} {%- render 'icon' with 'close' -%}</a>
-            {%- endfor -%}
-            {%- if filter.type == 'price_range' -%}
-              {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
-                <a href="{{ filter.url_to_remove }}" class="active-filter-chip">{{ filter.label }} {%- render 'icon' with 'close' -%}</a>
+            <div class="filter-group">
+              <button type="button" class="filter-group__toggle" aria-expanded="true">
+                {{ filter.label }}
+                <svg class="filter-group__chevron" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3 L5 7 L8.5 3" stroke="currentColor" fill="none" stroke-width="1.3"/></svg>
+              </button>
+              {%- if filter.active_values.size > 0 -%}
+                <button type="button" class="link filter-group__reset" data-filter-reset="{{ filter.param_name }}">Reset</button>
               {%- endif -%}
-            {%- endif -%}
+              <div class="filter-group__body">
+                {%- if filter.type == 'price_range' -%}
+                  <div class="filter-price-range">
+                    <div class="field">
+                      <label for="FilterPriceMin">Min</label>
+                      <input type="number" name="{{ filter.min_value.param_name }}" id="FilterPriceMin" placeholder="Min" value="{{ filter.min_value.value }}" min="0">
+                    </div>
+                    <div class="field">
+                      <label for="FilterPriceMax">Max</label>
+                      <input type="number" name="{{ filter.max_value.param_name }}" id="FilterPriceMax" placeholder="Max" value="{{ filter.max_value.value }}" min="0">
+                    </div>
+                    <button type="submit" class="btn btn--outline btn--full">Apply</button>
+                  </div>
+                {%- else -%}
+                  <ul class="filter-list" data-filter-param="{{ filter.param_name }}">
+                    {%- for value in filter.values -%}
+                      <li>
+                        <label class="filter-checkbox{% if value.count == 0 and value.active == false %} filter-checkbox--empty{% endif %}">
+                          <input
+                            type="checkbox"
+                            name="{{ value.param_name }}"
+                            value="{{ value.value }}"
+                            {% if value.active %}checked{% endif %}
+                            {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                            onchange="this.form.submit()">
+                          {{ value.label }} <span class="filter-checkbox__count">({{ value.count }})</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+            </div>
           {%- endfor -%}
-          <a href="{{ collection.url }}" class="active-filters__clear">Clear all</a>
-        </div>
+        </aside>
       {%- endif -%}
 
-      {%- if collection.filters.size > 0 -%}
-        <div class="filter-drawer" id="FilterDrawer" hidden>
-          <div class="filter-drawer__overlay" id="FilterDrawerOverlay"></div>
-          <div class="filter-drawer__panel" role="dialog" aria-label="Filter">
-            <div class="filter-drawer__header">
-              <h2>Filter</h2>
-              <button type="button" class="icon-btn" id="FilterDrawerClose" aria-label="Close filters">{%- render 'icon' with 'close' -%}</button>
-            </div>
-            <div class="filter-drawer__body">
-              {%- for filter in collection.filters -%}
-                <details class="filter-group" open>
-                  <summary>{{ filter.label }}</summary>
-                  <div class="filter-group__body">
-                    {%- if filter.type == 'price_range' -%}
-                      <div class="filter-price-range">
-                        <div class="field">
-                          <label for="FilterPriceMin">Min</label>
-                          <input type="number" name="{{ filter.min_value.param_name }}" id="FilterPriceMin" placeholder="Min" value="{{ filter.min_value.value }}" min="0">
-                        </div>
-                        <div class="field">
-                          <label for="FilterPriceMax">Max</label>
-                          <input type="number" name="{{ filter.max_value.param_name }}" id="FilterPriceMax" placeholder="Max" value="{{ filter.max_value.value }}" min="0">
-                        </div>
-                      </div>
-                    {%- else -%}
-                      <ul class="filter-list">
-                        {%- for value in filter.values -%}
-                          <li>
-                            <label class="filter-checkbox{% if value.count == 0 and value.active == false %} filter-checkbox--empty{% endif %}">
-                              <input
-                                type="checkbox"
-                                name="{{ value.param_name }}"
-                                value="{{ value.value }}"
-                                {% if value.active %}checked{% endif %}
-                                {% if value.count == 0 and value.active == false %}disabled{% endif %}
-                                onchange="this.form.submit()">
-                              {{ value.label }} <span class="filter-checkbox__count">({{ value.count }})</span>
-                            </label>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-                  </div>
-                </details>
-              {%- endfor -%}
-            </div>
-            <div class="filter-drawer__footer">
-              {%- if active_filter_count > 0 -%}
-                <a href="{{ collection.url }}" class="btn btn--outline">Clear All</a>
-              {%- endif -%}
-              <button type="submit" class="btn btn--primary">Show {{ collection.products_count }} Results</button>
+      <div class="collection__main">
+        <div class="collection__toolbar">
+          <p class="collection__count">{{ collection.products_count }} product{% if collection.products_count != 1 %}s{% endif %}</p>
+          <div class="collection__toolbar-actions">
+            <label for="SortBy" class="visually-hidden">Sort by</label>
+            <div class="select-box">
+              <select name="sort_by" id="SortBy" onchange="this.form.submit()">
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name | upcase }}</option>
+                {%- endfor -%}
+              </select>
             </div>
           </div>
         </div>
-      {%- endif -%}
-    </form>
 
-    {%- if collection.products.size == 0 -%}
-      <p class="collection__empty">No products found in this collection yet.</p>
-    {%- endif -%}
-  </div>
+        {%- if active_filter_count > 0 -%}
+          <div class="active-filters">
+            {%- for filter in collection.filters -%}
+              {%- for value in filter.active_values -%}
+                <a href="{{ value.url_to_remove }}" class="active-filter-chip">{{ value.label }} {%- render 'icon' with 'close' -%}</a>
+              {%- endfor -%}
+              {%- if filter.type == 'price_range' -%}
+                {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                  <a href="{{ filter.url_to_remove }}" class="active-filter-chip">{{ filter.label }} {%- render 'icon' with 'close' -%}</a>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
 
-  {%- if collection.products.size > 0 -%}
-    {%- paginate collection.products by 24 -%}
-      {%- comment -%}
-        Same full-bleed, hairline-gap, square-corner treatment as the
-        homepage's New Arrivals row and Shop by Category tiles (a Prada
-        category-page reference: edge-to-edge grid, thin gaps instead of
-        gutters, large portrait product shots, minimal caption below).
-        Breaks out of .container on purpose, same as those two sections.
-      {%- endcomment -%}
-      <div class="product-grid-bleed">
-        <div class="product-grid product-grid--bleed" style="--columns: {{ section.settings.columns }};">
-          {%- for product in collection.products -%}
-            {%- render 'product-card', product: product -%}
-          {%- endfor -%}
-        </div>
+        {%- if collection.products.size == 0 -%}
+          <p class="collection__empty">No products found in this collection yet.</p>
+        {%- endif -%}
+
+        {%- if collection.products.size > 0 -%}
+          {%- paginate collection.products by 24 -%}
+            <div class="product-grid" style="--columns: {{ section.settings.columns }};">
+              {%- for product in collection.products -%}
+                {%- render 'product-card', product: product -%}
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.pages > 1 -%}
+              <nav class="pagination" aria-label="Pagination">
+                {{ paginate | default_pagination }}
+              </nav>
+            {%- endif -%}
+          {%- endpaginate -%}
+        {%- endif -%}
       </div>
-
-      {%- if paginate.pages > 1 -%}
-        <div class="container">
-          <nav class="pagination" aria-label="Pagination">
-            {{ paginate | default_pagination }}
-          </nav>
-        </div>
-      {%- endif -%}
-    {%- endpaginate -%}
-  {%- endif -%}
+    </form>
+  </div>
 </div>
 
 {% schema %}

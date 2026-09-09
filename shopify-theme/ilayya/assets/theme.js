@@ -930,30 +930,30 @@
     });
   }
 
-  /* ---------- Collection filter drawer (facets) ---------- */
-  function initFilterDrawer() {
-    var toggle = qs('#FilterToggle');
-    var drawer = qs('#FilterDrawer');
-    var close = qs('#FilterDrawerClose');
-    var overlay = qs('#FilterDrawerOverlay');
-    if (!toggle || !drawer) return;
+  /* ---------- Collection filter sidebar (facets) ----------
+     Persistent left sidebar (not a drawer): each filter group collapses
+     via its own toggle, and a group's "Reset" clears just that group's
+     checkboxes and resubmits — the rest of the active filters stay put. ---------- */
+  function initFilterSidebar() {
+    var sidebar = qs('.collection__sidebar');
+    if (!sidebar) return;
 
-    function open() {
-      toggle.setAttribute('aria-expanded', 'true');
-      toggleHidden(drawer, true);
-    }
-    function closeDrawer() {
-      toggle.setAttribute('aria-expanded', 'false');
-      toggleHidden(drawer, false);
-    }
-    toggle.addEventListener('click', function () {
-      var isOpen = toggle.getAttribute('aria-expanded') === 'true';
-      if (isOpen) { closeDrawer(); } else { open(); }
+    qsa('.filter-group__toggle', sidebar).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var group = btn.closest('.filter-group');
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        if (group) group.classList.toggle('is-collapsed', isOpen);
+      });
     });
-    if (close) close.addEventListener('click', closeDrawer);
-    if (overlay) overlay.addEventListener('click', closeDrawer);
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !drawer.hasAttribute('hidden')) closeDrawer();
+
+    qsa('[data-filter-reset]', sidebar).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var list = btn.closest('.filter-group').querySelector('[data-filter-param]');
+        if (!list) return;
+        qsa('input[type="checkbox"]', list).forEach(function (input) { input.checked = false; });
+        btn.closest('form').submit();
+      });
     });
   }
 
@@ -1036,7 +1036,7 @@
     initTestimonials();
     initProductCardReveal();
     initAddressForms();
-    initFilterDrawer();
+    initFilterSidebar();
     initWishlist();
   });
 
