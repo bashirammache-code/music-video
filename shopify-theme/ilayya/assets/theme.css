@@ -296,6 +296,7 @@ p { margin: 0; }
 @media (max-width: 900px) { .product-grid--bleed { gap: 2px; } }
 .product-grid--bleed .product-card__media { border-radius: 0; }
 
+.product-card { position: relative; }
 .product-card__media {
   position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; border-radius: 3px;
   background: var(--color-frame);
@@ -355,6 +356,27 @@ p { margin: 0; }
 .product-card__add:hover { background: var(--color-border); }
 .product-card__add[disabled] { opacity: .4; cursor: not-allowed; }
 .product-card__soldout { margin-top: 12px; font-size: .78rem; opacity: .5; text-transform: uppercase; letter-spacing: .08em; }
+
+/* ---------- Wishlist heart toggle ---------- */
+.wishlist-btn {
+  background: rgba(246,244,241,.85); border: none; border-radius: 50%; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text);
+  z-index: 2;
+}
+.wishlist-btn svg { width: 16px; height: 16px; }
+.wishlist-btn__icon--filled { display: none; color: var(--color-accent); }
+.wishlist-btn.is-active .wishlist-btn__icon--outline { display: none; }
+.wishlist-btn.is-active .wishlist-btn__icon--filled { display: flex; }
+/* Default position: overlaid on the product-card image, opposite corner from the Sale/New badge. */
+.wishlist-btn:not(.wishlist-btn--inline) { position: absolute; top: 12px; right: 12px; }
+.wishlist-btn--inline {
+  background: none; width: auto; height: auto; flex-shrink: 0; color: var(--color-text);
+}
+.wishlist-btn--inline svg { width: 22px; height: 22px; }
+
+.product__title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+
+.wishlist-item__add { margin-top: 10px; height: 38px; padding: 0 16px; font-size: .68rem; }
 
 /* ---------- Category tiles: full-bleed row, hairline gap, square corners ----------
    Matches a reference of Prada's category row: edge-to-edge width, thin gap

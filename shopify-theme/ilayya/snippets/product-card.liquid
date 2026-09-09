@@ -29,6 +29,12 @@
       <span class="product-card__badge product-card__badge--new">New</span>
     {%- endif -%}
   </a>
+  {%- comment -%}
+    Sits outside the <a> on purpose — a button nested inside an anchor is
+    invalid markup and breaks screen readers; absolute-positioned against
+    .product-card instead so it still overlays the image corner.
+  {%- endcomment -%}
+  {%- render 'wishlist-button', product: product -%}
   <div class="product-card__info">
     <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {%- render 'price', product: product -%}

@@ -8,7 +8,8 @@
     cartAdd: '/cart/add.js',
     cartChange: '/cart/change.js',
     cartGet: '/cart.js',
-    searchSuggest: '/search/suggest.json'
+    searchSuggest: '/search/suggest.json',
+    rootUrl: '/'
   };
 
   /* ---------- Utilities ---------- */
@@ -19,6 +20,10 @@
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+
+  function formatMoney(cents) {
+    return '$' + (cents / 100).toFixed(2);
   }
 
   function updateCartCount(count) {
@@ -336,7 +341,7 @@
       var variantId = btn.getAttribute('data-variant-id');
       if (!variantId) return;
 
-      var card = btn.closest('.product-card, .cross-sell__item');
+      var card = btn.closest('.product-card, .cross-sell__item, .wishlist-item');
       var thumbHtml = '';
       var quantity = 1;
       if (card) {
@@ -788,6 +793,143 @@
     cards.forEach(function (card) { observer.observe(card); });
   }
 
+  /* ---------- Wishlist ----------
+     Saved handles live in localStorage only (no account/app dependency).
+     The drawer fetches each saved product's live data via /products/{handle}.js
+     on open, so it always reflects current price/availability. ---------- */
+  var WISHLIST_KEY = 'ilayya_wishlist';
+
+  function getWishlist() {
+    try {
+      var raw = window.localStorage.getItem(WISHLIST_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) { return []; }
+  }
+
+  function saveWishlist(list) {
+    try { window.localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch (err) { /* private browsing: ignore */ }
+  }
+
+  function updateWishlistCount() {
+    var el = qs('#WishlistCount');
+    if (!el) return;
+    var count = getWishlist().length;
+    el.textContent = count;
+    if (count === 0) { el.setAttribute('data-zero', ''); } else { el.removeAttribute('data-zero'); }
+  }
+
+  function refreshWishlistButtons() {
+    var list = getWishlist();
+    qsa('[data-wishlist-toggle]').forEach(function (btn) {
+      var handle = btn.getAttribute('data-product-handle');
+      var active = list.indexOf(handle) !== -1;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      btn.setAttribute('aria-label', active ? 'Remove from wishlist' : 'Add to wishlist');
+    });
+  }
+
+  function renderWishlistDrawer() {
+    var body = qs('#WishlistDrawerBody');
+    if (!body) return;
+    var list = getWishlist();
+
+    if (!list.length) {
+      body.innerHTML = '<div class="cart-drawer__empty"><p>Your wishlist is empty.</p>' +
+        '<a href="' + routes.rootUrl + '#shop" class="btn btn--primary">Shop Here</a></div>';
+      return;
+    }
+
+    body.innerHTML = '<p class="cart-drawer__note">Loading&hellip;</p>';
+    Promise.all(list.map(function (handle) {
+      return fetch('/products/' + handle + '.js', { headers: { Accept: 'application/json' } })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .catch(function () { return null; });
+    })).then(function (products) {
+      var html = '<ul class="cart-drawer__items wishlist-items">';
+      var found = 0;
+      products.forEach(function (product, i) {
+        if (!product) return;
+        found++;
+        var handle = list[i];
+        var variant = product.variants.find(function (v) { return v.available; }) || product.variants[0];
+        var imageSrc = product.featured_image ?
+          product.featured_image + (product.featured_image.indexOf('?') === -1 ? '?' : '&') + 'width=200' : '';
+        html += '<li class="cart-drawer__item wishlist-item">' +
+          '<a href="' + product.url + '" class="cart-drawer__item-media">' +
+          (imageSrc ? '<img src="' + imageSrc + '" alt="" width="100" loading="lazy">' : '') +
+          '</a>' +
+          '<div class="cart-drawer__item-info">' +
+          '<a href="' + product.url + '" class="cart-drawer__item-title">' + escapeHtml(product.title) + '</a>' +
+          '<span class="price"><span class="price__current">' + formatMoney(variant.price) + '</span></span>' +
+          (variant.available ?
+            '<button type="button" class="btn btn--outline wishlist-item__add" data-quick-add data-variant-id="' + variant.id + '" data-product-title="' + escapeHtml(product.title) + '">Add to Cart</button>' :
+            '<p class="product-card__soldout">Sold Out</p>') +
+          '</div>' +
+          '<button class="cart-drawer__item-remove" data-wishlist-remove data-product-handle="' + handle + '" aria-label="Remove from wishlist">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>' +
+          '</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+      body.innerHTML = found ? html : '<div class="cart-drawer__empty"><p>Your wishlist is empty.</p></div>';
+    });
+  }
+
+  function initWishlist() {
+    updateWishlistCount();
+    refreshWishlistButtons();
+
+    var toggle = qs('#WishlistToggle');
+    var drawer = qs('#WishlistDrawer');
+
+    function openDrawer() {
+      if (!drawer) return;
+      toggleHidden(drawer, true);
+      if (toggle) toggle.setAttribute('aria-expanded', 'true');
+      renderWishlistDrawer();
+    }
+    function closeDrawer() {
+      if (!drawer) return;
+      toggleHidden(drawer, false);
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    if (toggle) toggle.addEventListener('click', openDrawer);
+
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('#WishlistDrawerClose') || e.target.closest('#WishlistOverlay')) closeDrawer();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && drawer && !drawer.hasAttribute('hidden')) closeDrawer();
+    });
+
+    document.addEventListener('click', function (e) {
+      var toggleBtn = e.target.closest('[data-wishlist-toggle]');
+      if (!toggleBtn) return;
+      e.preventDefault();
+      var handle = toggleBtn.getAttribute('data-product-handle');
+      if (!handle) return;
+      var list = getWishlist();
+      var idx = list.indexOf(handle);
+      if (idx === -1) { list.push(handle); } else { list.splice(idx, 1); }
+      saveWishlist(list);
+      updateWishlistCount();
+      refreshWishlistButtons();
+    });
+
+    document.addEventListener('click', function (e) {
+      var removeBtn = e.target.closest('[data-wishlist-remove]');
+      if (!removeBtn) return;
+      var handle = removeBtn.getAttribute('data-product-handle');
+      var list = getWishlist().filter(function (h) { return h !== handle; });
+      saveWishlist(list);
+      updateWishlistCount();
+      refreshWishlistButtons();
+      renderWishlistDrawer();
+    });
+  }
+
   /* ---------- Collection filter drawer (facets) ---------- */
   function initFilterDrawer() {
     var toggle = qs('#FilterToggle');
@@ -895,6 +1037,7 @@
     initProductCardReveal();
     initAddressForms();
     initFilterDrawer();
+    initWishlist();
   });
 
   window.Ilayya = Ilayya;

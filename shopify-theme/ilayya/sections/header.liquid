@@ -22,6 +22,10 @@
           {%- render 'icon' with 'account' -%}
         </a>
       {%- endif -%}
+      <button class="icon-btn cart-toggle" id="WishlistToggle" aria-label="Wishlist" aria-expanded="false" aria-controls="WishlistDrawer">
+        {%- render 'icon' with 'heart' -%}
+        <span class="cart-count" id="WishlistCount" data-zero>0</span>
+      </button>
       <button class="icon-btn cart-toggle" id="CartToggle" aria-label="Cart" aria-expanded="false" aria-controls="CartDrawer">
         {%- render 'icon' with 'bag' -%}
         <span class="cart-count" id="CartCount" {% if cart.item_count == 0 %}data-zero{% endif %}>{{ cart.item_count }}</span>

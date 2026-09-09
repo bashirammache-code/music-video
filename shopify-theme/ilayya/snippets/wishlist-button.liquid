@@ -1,0 +1,16 @@
+{%- comment -%}
+  Wishlist heart toggle. State lives in localStorage (theme.js initWishlist)
+  — no account/app dependency. Usage:
+    {% render 'wishlist-button', product: product %}
+    {% render 'wishlist-button', product: product, modifier: 'inline' %}
+{%- endcomment -%}
+<button
+  type="button"
+  class="wishlist-btn{% if modifier %} wishlist-btn--{{ modifier }}{% endif %}"
+  data-wishlist-toggle
+  data-product-handle="{{ product.handle }}"
+  aria-pressed="false"
+  aria-label="Add to wishlist">
+  <span class="wishlist-btn__icon wishlist-btn__icon--outline">{%- render 'icon' with 'heart' -%}</span>
+  <span class="wishlist-btn__icon wishlist-btn__icon--filled">{%- render 'icon' with 'heart-filled' -%}</span>
+</button>

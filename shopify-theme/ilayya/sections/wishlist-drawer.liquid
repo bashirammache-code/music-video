@@ -1,0 +1,19 @@
+<div class="cart-drawer" id="WishlistDrawer" hidden>
+  <div class="cart-drawer__overlay" id="WishlistOverlay"></div>
+  <div class="cart-drawer__panel" role="dialog" aria-label="Wishlist" aria-modal="true">
+    <div class="cart-drawer__header">
+      <h2>Your Wishlist</h2>
+      <button class="icon-btn" id="WishlistDrawerClose" aria-label="Close wishlist">{%- render 'icon' with 'close' -%}</button>
+    </div>
+    <div class="cart-drawer__body" id="WishlistDrawerBody">
+      <div class="cart-drawer__empty">
+        <p>Your wishlist is empty.</p>
+        <a href="{{ routes.root_url }}#shop" class="btn btn--primary">Shop Here</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Wishlist drawer", "settings": [] }
+{% endschema %}
