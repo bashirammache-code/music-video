@@ -1,0 +1,65 @@
+{%- comment -%}
+  Shopify redirects to the login page automatically if no customer session
+  exists, but guard anyway rather than assume.
+{%- endcomment -%}
+{%- if customer -%}
+  <div class="account section-padding">
+    <div class="container">
+      <div class="account-header">
+        <div>
+          <h1 class="page__title">My Account</h1>
+          <p class="account-header__greeting">Welcome back, {{ customer.first_name | default: customer.email }}.</p>
+        </div>
+        <div class="account-header__actions">
+          <a href="{{ routes.account_addresses_url }}" class="btn btn--outline">Addresses</a>
+          <a href="{{ routes.account_logout_url }}" class="btn btn--outline">Log Out</a>
+        </div>
+      </div>
+
+      <h2 class="account-section__title">Order History</h2>
+      {%- paginate customer.orders by 20 -%}
+        {%- if customer.orders.size > 0 -%}
+          <div class="order-table-wrap">
+            <table class="cart-table order-table">
+              <thead>
+                <tr><th>Order</th><th>Date</th><th>Payment</th><th>Fulfillment</th><th>Total</th><th></th></tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.created_at | date: '%b %d, %Y' }}</td>
+                    <td>{{ order.financial_status_label }}</td>
+                    <td>{{ order.fulfillment_status_label }}</td>
+                    <td>{{ order.total_price | money }}</td>
+                    <td><a href="{{ order.customer_url }}" class="order-table__view">View</a></td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+          {%- if paginate.pages > 1 -%}
+            <nav class="pagination" aria-label="Pagination">{{ paginate | default_pagination }}</nav>
+          {%- endif -%}
+        {%- else -%}
+          <p class="account-empty">You haven't placed any orders yet.</p>
+        {%- endif -%}
+      {%- endpaginate -%}
+
+      {%- if customer.default_address -%}
+        <h2 class="account-section__title">Default Address</h2>
+        <div class="address-card">
+          <p>{{ customer.default_address.name }}</p>
+          <p>{{ customer.default_address.street }}</p>
+          <p>{{ customer.default_address.city }}, {{ customer.default_address.province_code }} {{ customer.default_address.zip }}</p>
+          <p>{{ customer.default_address.country }}</p>
+          <a href="{{ routes.account_addresses_url }}">Manage addresses</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{ "name": "Customer account", "settings": [] }
+{% endschema %}

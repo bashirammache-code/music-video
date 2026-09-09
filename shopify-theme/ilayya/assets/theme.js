@@ -788,6 +788,68 @@
     cards.forEach(function (card) { observer.observe(card); });
   }
 
+  /* ---------- Customer account: address forms ----------
+     Show/hide the new-address and per-address edit forms, cascade the
+     country select into a matching province select (Shopify bakes a
+     data-provinces JSON attribute onto each option in country_option_tags),
+     and submit the hidden delete form behind a confirm prompt. ---------- */
+  function initAddressForms() {
+    var toggles = qsa('[data-address-toggle]');
+    if (!toggles.length && !qsa('[data-address-country-select]').length) return;
+
+    toggles.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var wrap = qs('[data-address-form="' + btn.getAttribute('data-address-toggle') + '"]');
+        if (!wrap) return;
+        wrap.hidden = !wrap.hidden;
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      var deleteBtn = e.target.closest('[data-form-id]');
+      if (!deleteBtn) return;
+      var form = document.getElementById(deleteBtn.getAttribute('data-form-id'));
+      if (form && window.confirm('Remove this address?')) form.submit();
+    });
+
+    function populateProvinces(countrySelect) {
+      var form = countrySelect.closest('form');
+      if (!form) return;
+      var provinceSelect = form.querySelector('[data-address-province-select]');
+      if (!provinceSelect) return;
+
+      var selectedOption = countrySelect.options[countrySelect.selectedIndex];
+      var provinces = [];
+      try { provinces = JSON.parse(selectedOption.getAttribute('data-provinces') || '[]'); } catch (err) { provinces = []; }
+
+      var currentScript = form.querySelector('[data-address-current-province]');
+      var currentProvince = '';
+      if (currentScript) {
+        try { currentProvince = JSON.parse(currentScript.textContent) || ''; } catch (err) { currentProvince = ''; }
+      }
+
+      var provinceField = provinceSelect.closest('.field');
+      provinceSelect.innerHTML = '';
+      if (!provinces.length) {
+        if (provinceField) provinceField.hidden = true;
+        return;
+      }
+      if (provinceField) provinceField.hidden = false;
+      provinces.forEach(function (pair) {
+        var opt = document.createElement('option');
+        opt.value = pair[0];
+        opt.textContent = pair[1];
+        if (pair[0] === currentProvince) opt.selected = true;
+        provinceSelect.appendChild(opt);
+      });
+    }
+
+    qsa('[data-address-country-select]').forEach(function (select) {
+      populateProvinces(select);
+      select.addEventListener('change', function () { populateProvinces(select); });
+    });
+  }
+
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
@@ -804,6 +866,7 @@
     initQuantitySteppers();
     initTestimonials();
     initProductCardReveal();
+    initAddressForms();
   });
 
   window.Ilayya = Ilayya;

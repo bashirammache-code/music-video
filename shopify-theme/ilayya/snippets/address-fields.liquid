@@ -1,0 +1,58 @@
+{%- comment -%}
+  Shared field markup for the new-address and edit-address forms in
+  customer-addresses.liquid. Country/province cascade is handled by
+  initAddressForms() in theme.js, using the data-provinces JSON Shopify
+  attaches to each <option> in country_option_tags.
+  Usage: {% render 'address-fields', id_prefix: 'AddressNew', address: address, country_option_tags: country_option_tags %}
+  id_prefix must be unique per form on the page (multiple address forms
+  render on customers/addresses.liquid at once).
+{%- endcomment -%}
+<div class="field-row">
+  <div class="field">
+    <label for="{{ id_prefix }}-FirstName">First name</label>
+    <input type="text" name="address[first_name]" id="{{ id_prefix }}-FirstName" value="{{ address.first_name }}" autocomplete="given-name">
+  </div>
+  <div class="field">
+    <label for="{{ id_prefix }}-LastName">Last name</label>
+    <input type="text" name="address[last_name]" id="{{ id_prefix }}-LastName" value="{{ address.last_name }}" autocomplete="family-name">
+  </div>
+</div>
+<div class="field">
+  <label for="{{ id_prefix }}-Company">Company (optional)</label>
+  <input type="text" name="address[company]" id="{{ id_prefix }}-Company" value="{{ address.company }}" autocomplete="organization">
+</div>
+<div class="field">
+  <label for="{{ id_prefix }}-Address1">Address</label>
+  <input type="text" name="address[address1]" id="{{ id_prefix }}-Address1" value="{{ address.address1 }}" autocomplete="address-line1" required>
+</div>
+<div class="field">
+  <label for="{{ id_prefix }}-Address2">Apartment, suite, etc. (optional)</label>
+  <input type="text" name="address[address2]" id="{{ id_prefix }}-Address2" value="{{ address.address2 }}" autocomplete="address-line2">
+</div>
+<div class="field-row">
+  <div class="field">
+    <label for="{{ id_prefix }}-City">City</label>
+    <input type="text" name="address[city]" id="{{ id_prefix }}-City" value="{{ address.city }}" autocomplete="address-level2" required>
+  </div>
+  <div class="field">
+    <label for="{{ id_prefix }}-Zip">Postal / Zip code</label>
+    <input type="text" name="address[zip]" id="{{ id_prefix }}-Zip" value="{{ address.zip }}" autocomplete="postal-code" required>
+  </div>
+</div>
+<div class="field-row">
+  <div class="field">
+    <label for="{{ id_prefix }}-Country">Country</label>
+    <select name="address[country]" id="{{ id_prefix }}-Country" data-address-country-select autocomplete="country">
+      {{ country_option_tags }}
+    </select>
+  </div>
+  <div class="field">
+    <label for="{{ id_prefix }}-Province">State / Province</label>
+    <select name="address[province]" id="{{ id_prefix }}-Province" data-address-province-select autocomplete="address-level1"></select>
+  </div>
+</div>
+<div class="field">
+  <label for="{{ id_prefix }}-Phone">Phone</label>
+  <input type="tel" name="address[phone]" id="{{ id_prefix }}-Phone" value="{{ address.phone }}" autocomplete="tel">
+</div>
+<script type="application/json" data-address-current-province="{{ id_prefix }}">{{ address.province | json }}</script>
