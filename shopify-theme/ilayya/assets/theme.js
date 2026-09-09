@@ -788,6 +788,33 @@
     cards.forEach(function (card) { observer.observe(card); });
   }
 
+  /* ---------- Collection filter drawer (facets) ---------- */
+  function initFilterDrawer() {
+    var toggle = qs('#FilterToggle');
+    var drawer = qs('#FilterDrawer');
+    var close = qs('#FilterDrawerClose');
+    var overlay = qs('#FilterDrawerOverlay');
+    if (!toggle || !drawer) return;
+
+    function open() {
+      toggle.setAttribute('aria-expanded', 'true');
+      toggleHidden(drawer, true);
+    }
+    function closeDrawer() {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggleHidden(drawer, false);
+    }
+    toggle.addEventListener('click', function () {
+      var isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      if (isOpen) { closeDrawer(); } else { open(); }
+    });
+    if (close) close.addEventListener('click', closeDrawer);
+    if (overlay) overlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !drawer.hasAttribute('hidden')) closeDrawer();
+    });
+  }
+
   /* ---------- Customer account: address forms ----------
      Show/hide the new-address and per-address edit forms, cascade the
      country select into a matching province select (Shopify bakes a
@@ -867,6 +894,7 @@
     initTestimonials();
     initProductCardReveal();
     initAddressForms();
+    initFilterDrawer();
   });
 
   window.Ilayya = Ilayya;

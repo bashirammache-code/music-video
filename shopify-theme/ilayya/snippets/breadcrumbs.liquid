@@ -1,0 +1,24 @@
+{%- comment -%}
+  Renders a breadcrumb trail. Usage: {% render 'breadcrumbs' %}
+  Reads template/product/collection/page directly — no params needed.
+{%- endcomment -%}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="{{ routes.root_url }}">Home</a></li>
+    {%- case template.name -%}
+      {%- when 'product' -%}
+        {%- assign product_type_handle = product.type | handleize -%}
+        {%- assign crumb_collection = collection | default: collections[product_type_handle] -%}
+        {%- if crumb_collection -%}
+          <li><a href="{{ crumb_collection.url }}">{{ crumb_collection.title }}</a></li>
+        {%- endif -%}
+        <li aria-current="page">{{ product.title }}</li>
+      {%- when 'collection' -%}
+        <li aria-current="page">{{ collection.title }}</li>
+      {%- when 'page' -%}
+        <li aria-current="page">{{ page.title }}</li>
+      {%- when 'search' -%}
+        <li aria-current="page">Search Results</li>
+    {%- endcase -%}
+  </ol>
+</nav>

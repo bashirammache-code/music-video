@@ -570,6 +570,15 @@ p { margin: 0; }
 .cart-drawer__payments { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 4px; }
 .cart-drawer__payment-icon { height: 20px; width: auto; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-background); }
 
+/* ---------- Breadcrumbs ---------- */
+.breadcrumbs { margin: 20px 0; font-size: .78rem; }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; align-items: center; list-style: none; padding: 0; margin: 0; }
+.breadcrumbs li { display: flex; align-items: center; opacity: .6; }
+.breadcrumbs li + li::before { content: '/'; margin: 0 8px; opacity: .5; }
+.breadcrumbs a { color: var(--color-text); text-decoration: none; }
+.breadcrumbs a:hover { text-decoration: underline; }
+.breadcrumbs li[aria-current="page"] { opacity: 1; font-weight: 600; }
+
 /* ---------- Product page ---------- */
 .product-page__back {
   display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-body);
@@ -736,10 +745,50 @@ p { margin: 0; }
 .collection__header { text-align: center; margin-bottom: 32px; }
 .collection__title { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 10px; }
 .collection__description { opacity: .75; max-width: 560px; margin: 0 auto; }
-.collection__toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; font-size: .85rem; }
+.collection__toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: .85rem; }
 .collection__toolbar select { border: 1px solid var(--color-border); padding: 8px 10px; background: var(--color-surface); }
+.collection__toolbar-actions { display: flex; align-items: center; gap: 18px; }
+.collection__filter-toggle {
+  background: none; border: none; padding: 0; font: inherit; font-size: .85rem; letter-spacing: .03em;
+  text-transform: uppercase; cursor: pointer; color: var(--color-text);
+}
 .collection__empty { text-align: center; padding: 60px 0; opacity: .7; }
 .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 48px; }
+
+/* Active filter chips, shown above the grid once anything is applied */
+.active-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 24px; }
+.active-filter-chip {
+  display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-border);
+  padding: 6px 10px; font-size: .78rem; color: var(--color-text);
+}
+.active-filter-chip svg { width: 10px; height: 10px; }
+.active-filters__clear { font-size: .78rem; text-decoration: underline; opacity: .7; margin-left: 4px; }
+.active-filters__clear:hover { opacity: 1; }
+
+/* Filter drawer: same slide-in-panel structure as the cart/search drawers */
+.filter-drawer[hidden] { display: none; }
+.filter-drawer__overlay { position: fixed; inset: 0; background: rgba(36,31,29,.45); z-index: 90; }
+.filter-drawer__panel {
+  position: fixed; top: 0; left: 0; height: 100%; width: min(360px, 100%);
+  background: var(--color-background); z-index: 91; display: flex; flex-direction: column;
+  box-shadow: 12px 0 40px rgba(0,0,0,.12);
+}
+.filter-drawer__header { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px; border-bottom: 1px solid var(--color-border); }
+.filter-drawer__header h2 { font-size: 1.1rem; }
+.filter-drawer__body { flex: 1; overflow-y: auto; padding: 8px 24px; }
+.filter-drawer__footer { padding: 20px 24px; border-top: 1px solid var(--color-border); display: flex; gap: 10px; }
+.filter-drawer__footer .btn { flex: 1; }
+
+.filter-group { border-bottom: 1px solid var(--color-border); padding: 18px 0; }
+.filter-group summary { cursor: pointer; font-weight: 600; font-size: .92rem; list-style: none; }
+.filter-group summary::-webkit-details-marker { display: none; }
+.filter-group__body { margin-top: 14px; }
+.filter-list { display: flex; flex-direction: column; gap: 10px; }
+.filter-checkbox { display: flex; align-items: center; gap: 10px; font-size: .88rem; cursor: pointer; }
+.filter-checkbox--empty { opacity: .4; cursor: not-allowed; }
+.filter-checkbox__count { opacity: .55; font-size: .82em; }
+.filter-price-range { display: flex; gap: 12px; }
+.filter-price-range .field { flex: 1; margin-bottom: 0; }
 
 /* ---------- Cart page ---------- */
 .cart-page__title { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 32px; }
