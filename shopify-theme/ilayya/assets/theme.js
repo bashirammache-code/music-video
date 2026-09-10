@@ -218,57 +218,7 @@
       .catch(function () { /* silent fail: count already updated */ });
   }
 
-  /* ---------- Added-to-cart confirmation modal ----------
-     Shared by the product-page Add to Cart button and every quick-add "+"
-     (product cards and cross-sell items). Shows a brief loading state, then
-     a checkmark with View Cart / Checkout / Continue Shopping — adding no
-     longer force-opens the cart drawer on its own. */
   var Ilayya = window.Ilayya || {};
-
-  function initAddedModal() {
-    var modal = qs('#AddedModal');
-    if (!modal) return;
-    var backdrop = qs('#AddedModalBackdrop');
-    var closeBtn = qs('#AddedModalClose');
-    var loadingEl = qs('#AddedModalLoading');
-    var successEl = qs('#AddedModalSuccess');
-    var thumbEl = qs('#AddedModalThumb');
-    var nameEl = qs('#AddedModalName');
-    var priceEl = qs('#AddedModalPrice');
-    var viewCartBtn = qs('#AddedModalViewCart');
-    var continueBtn = qs('#AddedModalContinue');
-
-    function close() { modal.setAttribute('hidden', ''); }
-
-    function show(opts) {
-      loadingEl.hidden = false;
-      successEl.hidden = true;
-      thumbEl.innerHTML = opts.thumbHtml || '';
-      modal.removeAttribute('hidden');
-      setTimeout(function () {
-        loadingEl.hidden = true;
-        successEl.hidden = false;
-        nameEl.textContent = opts.title || '';
-        priceEl.textContent = opts.price || '';
-      }, 550);
-    }
-
-    if (backdrop) backdrop.addEventListener('click', close);
-    if (closeBtn) closeBtn.addEventListener('click', close);
-    if (continueBtn) continueBtn.addEventListener('click', close);
-    if (viewCartBtn) {
-      viewCartBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        close();
-        openCartDrawer();
-      });
-    }
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !modal.hasAttribute('hidden')) close();
-    });
-
-    Ilayya.showAddedModal = show;
-  }
 
   /* ---------- Signup pop-up: once per visitor, 20s after page load ---------- */
   function initSignupPopup() {
@@ -342,11 +292,8 @@
       if (!variantId) return;
 
       var card = btn.closest('.product-card, .cross-sell__item, .wishlist-item');
-      var thumbHtml = '';
       var quantity = 1;
       if (card) {
-        var img = card.querySelector('img');
-        if (img) thumbHtml = '<img src="' + img.src + '" alt="">';
         var qtyInput = card.querySelector('.qty-stepper input[type="number"]');
         if (qtyInput) quantity = parseInt(qtyInput.value, 10) || 1;
       }
@@ -363,13 +310,7 @@
         .then(function (cart) {
           updateCartCount(cart.item_count);
           refreshCartDrawer();
-          if (Ilayya.showAddedModal) {
-            Ilayya.showAddedModal({
-              title: btn.getAttribute('data-product-title'),
-              price: btn.getAttribute('data-product-price'),
-              thumbHtml: thumbHtml
-            });
-          }
+          openCartDrawer();
         })
         .catch(function () { /* silent fail: nothing added, count unchanged */ });
     });
@@ -388,11 +329,6 @@
       if (submitText) submitText.textContent = 'Adding…';
 
       var formData = new FormData(form);
-      var qtyInput = qs('#Quantity', form);
-      var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
-
-      var mainImage = qs('.product__gallery-image.is-active');
-      var thumbHtml = mainImage ? '<img src="' + mainImage.src + '" alt="">' : '';
 
       fetch(routes.cartAdd, { method: 'POST', body: formData, headers: { Accept: 'application/json' } })
         .then(function (res) { return res.json(); })
@@ -404,13 +340,7 @@
           if (submitText) submitText.textContent = 'Add to Cart';
           if (submitBtn) submitBtn.removeAttribute('disabled');
           refreshCartDrawer();
-          if (Ilayya.showAddedModal) {
-            var priceEl = qs('#ProductPrice .price__current');
-            var titleEl = qs('.product__title');
-            var priceText = priceEl ? priceEl.textContent : '';
-            var title = (titleEl ? titleEl.textContent : '') + (qty > 1 ? ' ×' + qty : '');
-            Ilayya.showAddedModal({ title: title, price: priceText, thumbHtml: thumbHtml });
-          }
+          openCartDrawer();
         })
         .catch(function () {
           if (submitText) submitText.textContent = 'Something went wrong';
@@ -1098,7 +1028,6 @@
     initHeroSlideshow();
     initSearchDrawer();
     initCartDrawer();
-    initAddedModal();
     initSignupPopup();
     initPromoTab();
     initQuickAdd();

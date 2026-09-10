@@ -739,52 +739,25 @@ p { margin: 0; }
 }
 .cross-sell__add:hover { background: var(--color-accent); }
 
-/* ---------- Signup pop-up + added-to-cart modal ---------- */
-.signup-modal, .added-modal { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.signup-modal[hidden], .added-modal[hidden] { display: none; }
-.signup-modal__backdrop, .added-modal__backdrop { position: absolute; inset: 0; background: rgba(36,31,29,.45); }
-.signup-modal__box, .added-modal__box {
+/* ---------- Signup pop-up ---------- */
+.signup-modal { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.signup-modal[hidden] { display: none; }
+.signup-modal__backdrop { position: absolute; inset: 0; background: rgba(36,31,29,.45); }
+.signup-modal__box {
   position: relative; background: var(--color-background); border: 1px solid var(--color-border); max-width: 380px; width: 100%;
   padding: 40px 32px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.25);
 }
-.signup-modal__close, .added-modal__close {
+.signup-modal__close {
   position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 1.4rem; line-height: 1;
   opacity: .55; cursor: pointer; padding: 4px;
 }
-.signup-modal__close:hover, .added-modal__close:hover { opacity: 1; }
+.signup-modal__close:hover { opacity: 1; }
 .signup-modal__box h2 { font-size: 1.4rem; margin-bottom: 14px; }
 .signup-modal__box p { font-size: .92rem; opacity: .8; margin-bottom: 22px; }
 .signup-form { display: flex; flex-direction: column; gap: 12px; }
 .signup-form input[type="email"] { border: 1px solid var(--color-border); background: var(--color-surface); padding: 13px 16px; font-size: .95rem; }
 .signup-modal__note { font-size: .74rem; letter-spacing: .04em; opacity: .5; margin-top: 16px; }
 .signup-modal__success { font-size: .85rem; color: var(--color-accent); margin-top: 8px; }
-
-.added-modal__loading { display: flex; align-items: center; justify-content: center; padding: 34px 0; }
-.spinner { width: 34px; height: 34px; border: 3px solid var(--color-border); border-top-color: var(--color-accent); border-radius: 50%; animation: ilayya-spin .7s linear infinite; }
-@keyframes ilayya-spin { to { transform: rotate(360deg); } }
-.added-modal__check {
-  width: 46px; height: 46px; border-radius: 50%; background: var(--color-accent); color: var(--color-background);
-  display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
-}
-.added-modal__check svg { width: 22px; height: 22px; }
-.added-modal__msg { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; margin-bottom: 18px; }
-.added-modal__item {
-  display: flex; align-items: center; gap: 14px; text-align: left; margin-bottom: 24px;
-  padding: 14px; background: var(--color-surface); border: 1px solid var(--color-border);
-}
-.added-modal__thumb {
-  position: relative; width: 52px; height: 52px; flex-shrink: 0; background: var(--color-background); border: 1px solid var(--color-border);
-  display: flex; align-items: center; justify-content: center; overflow: hidden;
-}
-.added-modal__thumb img { width: 100%; height: 100%; object-fit: contain; }
-.added-modal__name { font-family: var(--font-body); font-weight: 600; font-size: .88rem; margin-bottom: 3px; }
-.added-modal__price { font-family: var(--font-body); font-size: .82rem; opacity: .62; }
-.added-modal__success .btn { width: 100%; box-sizing: border-box; margin-bottom: 10px; }
-.added-modal__continue {
-  display: block; width: 100%; background: none; border: none; font-family: var(--font-body); font-size: .8rem;
-  letter-spacing: .06em; text-transform: uppercase; opacity: .65; padding: 8px 0 0; cursor: pointer;
-}
-.added-modal__continue:hover { opacity: 1; text-decoration: underline; }
 
 /* ---------- Promo tab: fixed "Get 10% Off" tab, right edge, all pages ----------
    Anchored to the bottom of the viewport (not vertically centered) so it never
