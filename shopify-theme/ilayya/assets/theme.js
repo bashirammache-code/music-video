@@ -218,6 +218,60 @@
       .catch(function () { /* silent fail: count already updated */ });
   }
 
+  /* ---------- Cart drawer: Note / Discount quick links ----------
+     Delegated to document so the panels keep working after
+     refreshCartDrawer() replaces #CartDrawer's innerHTML. */
+  function initCartExtras() {
+    function togglePanel(toggleBtn, panel) {
+      var isOpen = !panel.hidden;
+      panel.hidden = isOpen;
+      toggleBtn.setAttribute('aria-expanded', String(!isOpen));
+    }
+
+    document.addEventListener('click', function (e) {
+      var noteToggle = e.target.closest('#CartNoteToggle');
+      if (noteToggle) {
+        var notePanel = qs('#CartNotePanel');
+        if (notePanel) togglePanel(noteToggle, notePanel);
+        return;
+      }
+      var discountToggle = e.target.closest('#CartDiscountToggle');
+      if (discountToggle) {
+        var discountPanel = qs('#CartDiscountPanel');
+        if (discountPanel) togglePanel(discountToggle, discountPanel);
+        return;
+      }
+      var saveBtn = e.target.closest('#CartNoteSave');
+      if (saveBtn) {
+        var input = qs('#CartNoteInput');
+        var status = qs('#CartNoteStatus');
+        if (!input) return;
+        fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ note: input.value })
+        })
+          .then(function () {
+            if (status) {
+              status.hidden = false;
+              setTimeout(function () { status.hidden = true; }, 2000);
+            }
+          })
+          .catch(function () { /* silent fail: note not saved */ });
+      }
+    });
+
+    document.addEventListener('submit', function (e) {
+      var form = e.target.closest('#CartDiscountPanel');
+      if (!form) return;
+      e.preventDefault();
+      var input = qs('#CartDiscountInput', form);
+      var code = input && input.value.trim();
+      if (!code) return;
+      window.location.href = '/discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent(routes.rootUrl + 'cart');
+    });
+  }
+
   var Ilayya = window.Ilayya || {};
 
   /* ---------- Signup pop-up: once per visitor, 20s after page load ---------- */
@@ -1028,6 +1082,7 @@
     initHeroSlideshow();
     initSearchDrawer();
     initCartDrawer();
+    initCartExtras();
     initSignupPopup();
     initPromoTab();
     initQuickAdd();

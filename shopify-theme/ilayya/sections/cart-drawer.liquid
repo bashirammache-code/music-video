@@ -62,6 +62,25 @@
 
     {%- if cart.item_count > 0 -%}
       <div class="cart-drawer__footer">
+        <div class="cart-drawer__quicklinks">
+          <button type="button" class="cart-drawer__quicklink" id="CartNoteToggle" aria-expanded="false" aria-controls="CartNotePanel">Note</button>
+          {%- if shop.shipping_policy -%}
+            <a href="{{ shop.shipping_policy.url }}" class="cart-drawer__quicklink" target="_blank" rel="noopener">Shipping</a>
+          {%- endif -%}
+          <button type="button" class="cart-drawer__quicklink" id="CartDiscountToggle" aria-expanded="false" aria-controls="CartDiscountPanel">Discount</button>
+        </div>
+
+        <div class="cart-drawer__panel-field" id="CartNotePanel" hidden>
+          <textarea id="CartNoteInput" placeholder="Add a note to your order" rows="3">{{ cart.note }}</textarea>
+          <button type="button" class="cart-drawer__panel-submit" id="CartNoteSave">Save note</button>
+          <p class="cart-drawer__panel-status" id="CartNoteStatus" hidden>Note saved.</p>
+        </div>
+
+        <form class="cart-drawer__panel-field" id="CartDiscountPanel" hidden>
+          <input type="text" id="CartDiscountInput" placeholder="Discount code" autocomplete="off">
+          <button type="submit" class="cart-drawer__panel-submit">Apply</button>
+        </form>
+
         <div class="cart-drawer__subtotal">
           <span>Subtotal</span>
           <span>{{ cart.total_price | money }}</span>
