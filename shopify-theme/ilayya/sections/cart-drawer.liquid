@@ -1,0 +1,113 @@
+<div class="cart-drawer" id="CartDrawer" hidden>
+  <div class="cart-drawer__overlay" id="CartOverlay"></div>
+  <div class="cart-drawer__panel" role="dialog" aria-label="Cart" aria-modal="true">
+    <div class="cart-drawer__header">
+      <h2>{{ 'cart.general.title' | t }} ({{ cart.item_count }})</h2>
+      <button class="icon-btn" id="CartDrawerClose" aria-label="Close cart">{%- render 'icon' with 'close' -%}</button>
+    </div>
+
+    {%- liquid
+      assign free_shipping_threshold_cents = settings.free_shipping_threshold | times: 100
+      assign shipping_remaining_cents = free_shipping_threshold_cents | minus: cart.total_price
+      assign shipping_progress = 0
+      if free_shipping_threshold_cents > 0
+        assign shipping_progress = cart.total_price | times: 100.0 | divided_by: free_shipping_threshold_cents
+        assign shipping_progress = shipping_progress | at_most: 100 | at_least: 0
+      endif
+    -%}
+    {%- if cart.item_count > 0 and settings.free_shipping_bar_enabled and free_shipping_threshold_cents > 0 -%}
+      <div class="cart-drawer__shipping-bar">
+        {%- if shipping_remaining_cents > 0 -%}
+          <p class="cart-drawer__shipping-msg">{%- render 'icon' with 'truck' -%} You're <strong>{{ shipping_remaining_cents | money }}</strong> away from free shipping</p>
+        {%- else -%}
+          <p class="cart-drawer__shipping-msg cart-drawer__shipping-msg--met">{%- render 'icon' with 'truck' -%} You've unlocked free shipping!</p>
+        {%- endif -%}
+        <div class="cart-drawer__progress"><div class="cart-drawer__progress-fill" style="width: {{ shipping_progress }}%;"></div></div>
+      </div>
+    {%- endif -%}
+
+    <div class="cart-drawer__body" id="CartDrawerBody">
+      {%- if cart.item_count == 0 -%}
+        <div class="cart-drawer__empty">
+          <p>{{ 'cart.general.empty' | t }}</p>
+          <a href="{{ routes.root_url }}#shop" class="btn btn--primary">Shop Here</a>
+        </div>
+      {%- else -%}
+        <ul class="cart-drawer__items">
+          {%- for item in cart.items -%}
+            <li class="cart-drawer__item">
+              <a href="{{ item.url }}" class="cart-drawer__item-media">
+                {%- if item.image -%}
+                  <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.image.alt | escape }}" width="100" loading="lazy">
+                {%- endif -%}
+              </a>
+              <div class="cart-drawer__item-info">
+                <a href="{{ item.url }}" class="cart-drawer__item-title">{{ item.product.title }}</a>
+                {%- if item.variant.title != 'Default Title' -%}
+                  <p class="cart-drawer__item-variant">{{ item.variant.title }}</p>
+                {%- endif -%}
+                {%- render 'price', variant: item.variant, show_savings: true -%}
+                <div class="cart-drawer__qty" data-line="{{ forloop.index }}">
+                  <button class="qty-btn" data-action="decrease" aria-label="Decrease quantity">{%- render 'icon' with 'minus' -%}</button>
+                  <span class="qty-value">{{ item.quantity }}</span>
+                  <button class="qty-btn" data-action="increase" aria-label="Increase quantity">{%- render 'icon' with 'plus' -%}</button>
+                </div>
+              </div>
+              <button class="cart-drawer__item-remove" data-line="{{ forloop.index }}" aria-label="Remove item">{%- render 'icon' with 'close' -%}</button>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {%- if cart.item_count > 0 -%}
+      <div class="cart-drawer__footer">
+        <div class="cart-drawer__quicklinks">
+          <button type="button" class="cart-drawer__quicklink" id="CartNoteToggle" aria-expanded="false" aria-controls="CartNotePanel">Note</button>
+          {%- if shop.shipping_policy -%}
+            <a href="{{ shop.shipping_policy.url }}" class="cart-drawer__quicklink" target="_blank" rel="noopener">Shipping</a>
+          {%- endif -%}
+          <button type="button" class="cart-drawer__quicklink" id="CartDiscountToggle" aria-expanded="false" aria-controls="CartDiscountPanel">Discount</button>
+        </div>
+
+        <div class="cart-drawer__panel-field" id="CartNotePanel" hidden>
+          <textarea id="CartNoteInput" placeholder="Add a note to your order" rows="3">{{ cart.note }}</textarea>
+          <button type="button" class="cart-drawer__panel-submit" id="CartNoteSave">Save note</button>
+          <p class="cart-drawer__panel-status" id="CartNoteStatus" hidden>Note saved.</p>
+        </div>
+
+        <form class="cart-drawer__panel-field" id="CartDiscountPanel" hidden>
+          <input type="text" id="CartDiscountInput" placeholder="Discount code" autocomplete="off">
+          <button type="submit" class="cart-drawer__panel-submit">Apply</button>
+        </form>
+
+        <div class="cart-drawer__subtotal">
+          <span>Subtotal</span>
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+        <p class="cart-drawer__note">Shipping and taxes calculated at checkout.</p>
+        <a href="{{ routes.cart_url }}" class="btn btn--outline">View bag</a>
+        <a href="{{ routes.cart_url }}/checkout" class="btn btn--primary">Checkout &bull; {{ cart.total_price | money }}</a>
+        {%- comment -%}
+          Payment icons mirror the footer's pattern: whichever methods the
+          merchant has enabled under Settings > Payments, never hardcoded.
+        {%- endcomment -%}
+        {%- assign payment_types = shop.enabled_payment_types -%}
+        {%- if payment_types.size > 0 -%}
+          <div class="cart-drawer__payments">
+            {%- for type in payment_types -%}
+              {{ type | payment_type_svg_tag: class: 'cart-drawer__payment-icon' }}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": []
+}
+{% endschema %}

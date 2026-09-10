@@ -1,0 +1,20 @@
+{
+  "general": {
+    "search": {
+      "placeholder": "Search jewelry"
+    }
+  },
+  "products": {
+    "product": {
+      "sold_out": "Sold Out",
+      "add_to_cart": "Add to Cart",
+      "unavailable": "Unavailable"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Bag",
+      "empty": "Your cart is currently empty."
+    }
+  }
+}

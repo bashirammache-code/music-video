@@ -1,0 +1,45 @@
+{%- comment -%}
+  Usage: {% render 'product-card', product: product %}
+{%- endcomment -%}
+<div class="product-card">
+  <a href="{{ product.url }}" class="product-card__media">
+    {%- if product.featured_image -%}
+      <img
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        alt="{{ product.featured_image.alt | escape }}"
+        loading="lazy"
+        width="600"
+        height="{{ 600 | divided_by: product.featured_image.aspect_ratio }}"
+        class="product-card__img product-card__img--main">
+      {%- if product.images[1] -%}
+        <img
+          src="{{ product.images[1] | image_url: width: 600 }}"
+          alt=""
+          loading="lazy"
+          width="600"
+          height="{{ 600 | divided_by: product.images[1].aspect_ratio }}"
+          class="product-card__img product-card__img--hover">
+      {%- endif -%}
+    {%- else -%}
+      <div class="product-card__placeholder">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+    {%- endif -%}
+    {%- if product.compare_at_price > product.price -%}
+      <span class="product-card__badge">Sale</span>
+    {%- elsif product.tags contains 'new' -%}
+      <span class="product-card__badge product-card__badge--new">New</span>
+    {%- endif -%}
+  </a>
+  {%- comment -%}
+    Sits outside the <a> on purpose — a button nested inside an anchor is
+    invalid markup and breaks screen readers; absolute-positioned against
+    .product-card instead so it still overlays the image corner.
+  {%- endcomment -%}
+  {%- render 'wishlist-button', product: product -%}
+  <div class="product-card__info">
+    <h3 class="product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    {%- render 'price', product: product -%}
+    {%- unless product.selected_or_first_available_variant.available -%}
+      <p class="product-card__soldout">{{ 'products.product.sold_out' | t }}</p>
+    {%- endunless -%}
+  </div>
+</div>

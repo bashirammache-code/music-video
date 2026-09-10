@@ -1,0 +1,73 @@
+{%- if customer -%}
+  <div class="account section-padding">
+    <div class="container container--narrow">
+      <a href="{{ routes.account_url }}" class="product-page__back">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M15 5 L8 12 L15 19" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+        Back to Account
+      </a>
+
+      <div class="account-header">
+        <h1 class="page__title">Addresses</h1>
+        <button type="button" class="btn btn--outline" data-address-toggle="new">Add a New Address</button>
+      </div>
+
+      <div class="address-form-wrap" data-address-form="new" hidden>
+        {%- form 'customer_address', customer.new_address, id: 'AddressNewForm' -%}
+          {%- if form.errors -%}<div class="errors">{{ form.errors | default_errors }}</div>{%- endif -%}
+          {%- render 'address-fields', id_prefix: 'AddressNew', address: form.address, country_option_tags: country_option_tags -%}
+          <div class="address-form__actions">
+            <button type="submit" class="btn btn--primary">Save Address</button>
+            <button type="button" class="btn btn--outline" data-address-toggle="new">Cancel</button>
+          </div>
+        {%- endform -%}
+      </div>
+
+      {%- if customer.addresses.size > 0 -%}
+        <div class="address-grid">
+          {%- for address in customer.addresses -%}
+            <div class="address-card">
+              {%- if address == customer.default_address -%}<span class="address-card__badge">Default</span>{%- endif -%}
+              <p>{{ address.name }}</p>
+              <p>{{ address.street }}</p>
+              <p>{{ address.city }}, {{ address.province_code }} {{ address.zip }}</p>
+              <p>{{ address.country }}</p>
+              {%- if address.phone != blank -%}<p>{{ address.phone }}</p>{%- endif -%}
+              <div class="address-card__actions">
+                <button type="button" class="link" data-address-toggle="{{ address.id }}">Edit</button>
+                <button type="button" class="link" data-form-id="AddressDelete{{ address.id }}">Remove</button>
+              </div>
+
+              <div class="address-form-wrap" data-address-form="{{ address.id }}" hidden>
+                {%- assign address_form_id = 'AddressForm' | append: address.id -%}
+                {%- form 'customer_address', address, id: address_form_id -%}
+                  {%- if form.errors -%}<div class="errors">{{ form.errors | default_errors }}</div>{%- endif -%}
+                  {%- render 'address-fields', id_prefix: address_form_id, address: address, country_option_tags: country_option_tags -%}
+                  {%- unless address == customer.default_address -%}
+                    <label class="address-form__checkbox">
+                      <input type="checkbox" name="address[default]" value="1">
+                      Set as default address
+                    </label>
+                  {%- endunless -%}
+                  <div class="address-form__actions">
+                    <button type="submit" class="btn btn--primary">Update Address</button>
+                    <button type="button" class="btn btn--outline" data-address-toggle="{{ address.id }}">Cancel</button>
+                  </div>
+                {%- endform -%}
+              </div>
+            </div>
+
+            <form id="AddressDelete{{ address.id }}" method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}" data-address-delete-form>
+              <input type="hidden" name="_method" value="delete">
+            </form>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p class="account-empty">You don't have any saved addresses yet.</p>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{ "name": "Customer addresses", "settings": [] }
+{% endschema %}

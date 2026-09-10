@@ -1,0 +1,47 @@
+<div class="section-padding trust-badges">
+  <div class="container">
+    <div class="trust-badges__row">
+      {%- for block in section.blocks -%}
+        <div class="trust-badges__item" {{ block.shopify_attributes }}>
+          <span class="trust-badges__icon">{% render 'icon' with block.settings.icon %}</span>
+          <h3 class="trust-badges__title">{{ block.settings.heading }}</h3>
+          <p class="trust-badges__text">{{ block.settings.text }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Trust badges",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "options": [
+            { "value": "truck", "label": "Truck" },
+            { "value": "coins", "label": "Coins" },
+            { "value": "info-circle", "label": "Info circle" },
+            { "value": "water-drop", "label": "Water drop" }
+          ], "default": "truck" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Fast Shipping" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust badges",
+      "blocks": [
+        { "type": "badge", "settings": { "icon": "truck", "heading": "Fast Shipping Across Lebanon", "text": "Dispatched next day and delivered within 1-3 days, with tracking every step of the way." } },
+        { "type": "badge", "settings": { "icon": "coins", "heading": "14-Day Money-Back Guarantee", "text": "Not completely satisfied? Return your order within 14 days for a full refund, if unused." } },
+        { "type": "badge", "settings": { "icon": "info-circle", "heading": "316L Premium Stainless Steel", "text": "Crafted from high grade 316L steel for lasting durability and everyday wear." } },
+        { "type": "badge", "settings": { "icon": "water-drop", "heading": "Water & Tarnish Resistant", "text": "Designed to handle daily life while maintaining its shine and finish." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

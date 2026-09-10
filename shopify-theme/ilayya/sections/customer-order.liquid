@@ -1,0 +1,97 @@
+{%- if order -%}
+  <div class="account section-padding">
+    <div class="container">
+      <a href="{{ routes.account_url }}" class="product-page__back">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M15 5 L8 12 L15 19" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+        Back to Account
+      </a>
+
+      <div class="account-header">
+        <div>
+          <h1 class="page__title">Order {{ order.name }}</h1>
+          <p class="account-header__greeting">Placed on {{ order.created_at | date: '%B %d, %Y' }}</p>
+        </div>
+        <div class="order-status">
+          <span class="order-status__badge">{{ order.financial_status_label }}</span>
+          <span class="order-status__badge">{{ order.fulfillment_status_label }}</span>
+        </div>
+      </div>
+
+      {%- if order.cancelled -%}
+        <p class="account-box__note">This order was cancelled{% if order.cancel_reason_label %} ({{ order.cancel_reason_label }}){% endif %} on {{ order.cancelled_at | date: '%B %d, %Y' }}.</p>
+      {%- endif -%}
+
+      {%- for fulfillment in order.fulfillments -%}
+        {%- if fulfillment.tracking_number -%}
+          <p class="account-box__note">
+            Tracking: {{ fulfillment.tracking_company }}
+            {%- if fulfillment.tracking_url %} &mdash; <a href="{{ fulfillment.tracking_url }}" target="_blank" rel="noopener">{{ fulfillment.tracking_number }}</a>{% else %} {{ fulfillment.tracking_number }}{% endif -%}
+          </p>
+        {%- endif -%}
+      {%- endfor -%}
+
+      <div class="order-table-wrap">
+        <table class="cart-table">
+          <thead>
+            <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            {%- for line_item in order.line_items -%}
+              <tr>
+                <td class="cart-table__product">
+                  {%- if line_item.image -%}
+                    <img src="{{ line_item.image | image_url: width: 160 }}" alt="{{ line_item.image.alt | escape }}" width="80" loading="lazy">
+                  {%- endif -%}
+                  <div>
+                    {%- if line_item.product -%}<a href="{{ line_item.product.url }}">{{ line_item.title }}</a>{%- else -%}{{ line_item.title }}{%- endif -%}
+                    {%- if line_item.variant.title != 'Default Title' -%}<p class="cart-table__variant">{{ line_item.variant.title }}</p>{%- endif -%}
+                  </div>
+                </td>
+                <td>{{ line_item.original_price | money }}</td>
+                <td>{{ line_item.quantity }}</td>
+                <td>{{ line_item.final_line_price | money }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="order-summary">
+        <div class="order-summary__row"><span>Subtotal</span><span>{{ order.line_items_subtotal_price | money }}</span></div>
+        {%- for discount in order.cart_level_discount_applications -%}
+          <div class="order-summary__row order-summary__row--discount"><span>{{ discount.title }}</span><span>&minus;{{ discount.total_allocated_amount | money }}</span></div>
+        {%- endfor -%}
+        <div class="order-summary__row"><span>Shipping</span><span>{{ order.total_shipping_price | money }}</span></div>
+        {%- if order.tax_price > 0 -%}
+          <div class="order-summary__row"><span>Tax</span><span>{{ order.tax_price | money }}</span></div>
+        {%- endif -%}
+        <div class="order-summary__row order-summary__row--total"><span>Total</span><span>{{ order.total_price | money }}</span></div>
+      </div>
+
+      <div class="order-addresses">
+        {%- if order.shipping_address -%}
+          <div class="address-card">
+            <h3>Shipping Address</h3>
+            <p>{{ order.shipping_address.name }}</p>
+            <p>{{ order.shipping_address.street }}</p>
+            <p>{{ order.shipping_address.city }}, {{ order.shipping_address.province_code }} {{ order.shipping_address.zip }}</p>
+            <p>{{ order.shipping_address.country }}</p>
+          </div>
+        {%- endif -%}
+        {%- if order.billing_address -%}
+          <div class="address-card">
+            <h3>Billing Address</h3>
+            <p>{{ order.billing_address.name }}</p>
+            <p>{{ order.billing_address.street }}</p>
+            <p>{{ order.billing_address.city }}, {{ order.billing_address.province_code }} {{ order.billing_address.zip }}</p>
+            <p>{{ order.billing_address.country }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{ "name": "Customer order", "settings": [] }
+{% endschema %}

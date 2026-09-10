@@ -1,0 +1,122 @@
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+
+    <div class="site-footer__brand">
+      <div class="site-footer__social">
+        {%- if section.settings.instagram_url != blank -%}
+          <a href="{{ section.settings.instagram_url }}" aria-label="Instagram" target="_blank" rel="noopener">{%- render 'icon' with 'instagram' -%}</a>
+        {%- endif -%}
+        {%- if section.settings.pinterest_url != blank -%}
+          <a href="{{ section.settings.pinterest_url }}" aria-label="Pinterest" target="_blank" rel="noopener">{%- render 'icon' with 'pinterest' -%}</a>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%}
+        Falls back to the shop's own contact email (Settings > General) when
+        no email is set here, so this never shows blank.
+      {%- endcomment -%}
+      {%- assign contact_email = section.settings.contact_email | default: shop.email -%}
+      {%- if section.settings.contact_heading != blank and contact_email != blank -%}
+        <div class="site-footer__contact">
+          <h3>{{ section.settings.contact_heading }}</h3>
+          <a href="mailto:{{ contact_email }}" class="site-footer__contact-email">
+            <span class="site-footer__contact-icon">{%- render 'icon' with 'mail' -%}</span>
+            {{ contact_email }}
+          </a>
+          {%- if section.settings.contact_note != blank -%}
+            <p class="site-footer__contact-note">{{ section.settings.contact_note }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%}
+      These two columns link straight to the store's own pages and policies
+      (Settings > Policies, and the Pages you've already created) instead of
+      a navigation menu someone has to remember to fill in. Each link only
+      shows once the page/policy actually exists, and new ones (e.g. adding
+      a Shipping policy or a Track Order page later) appear automatically.
+    {%- endcomment -%}
+    <div class="site-footer__col">
+      <h3>{{ section.settings.help_heading }}</h3>
+      <ul>
+        {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">Shipping Policy</a></li>{%- endif -%}
+        {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">Return Policy</a></li>{%- endif -%}
+        {%- if pages['track-my-order'] -%}<li><a href="{{ pages['track-my-order'].url }}">Track My Order</a></li>{%- endif -%}
+        {%- if pages['payment-method'] -%}<li><a href="{{ pages['payment-method'].url }}">Payment Method</a></li>{%- endif -%}
+        {%- if pages['faqs'] -%}<li><a href="{{ pages['faqs'].url }}">FAQs</a></li>{%- endif -%}
+        {%- if pages['contact'] -%}<li><a href="{{ pages['contact'].url }}">Contact Us</a></li>{%- endif -%}
+      </ul>
+    </div>
+
+    <div class="site-footer__col">
+      <h3>{{ section.settings.about_heading }}</h3>
+      <ul>
+        {%- if pages['about'] -%}<li><a href="{{ pages['about'].url }}">About Us</a></li>{%- endif -%}
+        {%- if pages['sustainability'] -%}<li><a href="{{ pages['sustainability'].url }}">Sustainability</a></li>{%- endif -%}
+        {%- if shop.terms_of_service -%}<li><a href="{{ shop.terms_of_service.url }}">Terms and Conditions</a></li>{%- endif -%}
+        {%- if shop.privacy_policy -%}<li><a href="{{ shop.privacy_policy.url }}">Privacy Policy</a></li>{%- endif -%}
+        {%- comment -%}
+          "Legal notice" has no dedicated shop.* accessor in Liquid, so it's
+          picked out of the general policies list by title instead.
+        {%- endcomment -%}
+        {%- assign legal_notice = nil -%}
+        {%- for policy in shop.policies -%}
+          {%- if policy.title contains 'Legal' -%}{%- assign legal_notice = policy -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if legal_notice -%}<li><a href="{{ legal_notice.url }}">Intellectual Property Rights</a></li>{%- endif -%}
+      </ul>
+    </div>
+
+  </div>
+
+  {%- comment -%}
+    Renders whichever payment icons the merchant has actually enabled under
+    Settings > Payments in Shopify Admin — always accurate, no hardcoded logos.
+  {%- endcomment -%}
+  {%- assign payment_types = shop.enabled_payment_types -%}
+  {%- if payment_types.size > 0 -%}
+    <div class="container site-footer__payments">
+      {%- for type in payment_types -%}
+        {{ type | payment_type_svg_tag: class: 'site-footer__payment-icon' }}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  <div class="container site-footer__bottom">
+    <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    <img class="site-footer__mark" src="{{ 'logo-wordmark.png' | asset_url }}" alt="{{ shop.name }}" width="90" loading="lazy">
+    {%- comment -%}
+      Only renders once a second language is actually added under Settings >
+      Languages in Shopify Admin — invisible (and harmless) until then.
+    {%- endcomment -%}
+    {%- if localization.available_languages.size > 1 -%}
+      {%- form 'localization', id: 'FooterLanguageForm', class: 'footer-language-form' -%}
+        <select name="locale_code" onchange="this.form.submit()" aria-label="Language">
+          {%- for language in localization.available_languages -%}
+            <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>{{ language.endonym_name | capitalize }}</option>
+          {%- endfor -%}
+        </select>
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "textarea", "id": "brand_text", "label": "Brand text", "default": "Demi-fine jewelry, made to last. Designed in small batches, worn every day." },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+    { "type": "url", "id": "pinterest_url", "label": "Pinterest URL" },
+    { "type": "header", "content": "Need to get in touch? column" },
+    { "type": "text", "id": "contact_heading", "label": "Heading", "default": "Need to get in touch?" },
+    { "type": "text", "id": "contact_email", "label": "Support email", "info": "Leave blank to use the shop's contact email from Settings > General." },
+    { "type": "textarea", "id": "contact_note", "label": "Note", "default": "Our customer support team is available 24/7." },
+    { "type": "header", "content": "Help and Support column" },
+    { "type": "text", "id": "help_heading", "label": "Heading", "default": "Help and Support" },
+    { "type": "header", "content": "About Us column" },
+    { "type": "text", "id": "about_heading", "label": "Heading", "default": "Company Info" }
+  ]
+}
+{% endschema %}

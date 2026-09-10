@@ -1,0 +1,75 @@
+<div class="account section-padding">
+  <div class="container container--narrow">
+    <div class="account-box" id="LoginForm">
+      <h1 class="page__title">Sign In</h1>
+      {%- form 'customer_login' -%}
+        {%- if form.errors -%}
+          <div class="errors">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+        <div class="field">
+          <label for="CustomerEmail">Email</label>
+          <input type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+        </div>
+        <div class="field">
+          <label for="CustomerPassword">Password</label>
+          <input type="password" name="customer[password]" id="CustomerPassword" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Sign In</button>
+        <p class="account-box__aside">
+          <a href="#recover" id="RecoverPasswordLink">Forgot your password?</a>
+        </p>
+      {%- endform -%}
+      <p class="account-box__aside">New here? <a href="{{ routes.account_register_url }}">Create an account</a></p>
+    </div>
+
+    <div class="account-box" id="RecoverPasswordForm" hidden>
+      <h1 class="page__title">Reset Password</h1>
+      <p class="account-box__note">We'll send you an email to reset your password.</p>
+      {%- form 'recover_customer_password', id: 'RecoverCustomerPasswordForm' -%}
+        {%- if form.errors -%}
+          <div class="errors">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+        {%- if form.posted_successfully? -%}
+          <p class="account-box__success">If that email has an account, we've sent a link to reset the password.</p>
+        {%- endif -%}
+        <div class="field">
+          <label for="RecoverEmail">Email</label>
+          <input type="email" name="email" id="RecoverEmail" autocomplete="email" required>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Send Reset Link</button>
+        <p class="account-box__aside"><a href="#login" id="CancelRecoverLink">Back to sign in</a></p>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var loginForm = document.getElementById('LoginForm');
+    var recoverForm = document.getElementById('RecoverPasswordForm');
+    var recoverLink = document.getElementById('RecoverPasswordLink');
+    var cancelLink = document.getElementById('CancelRecoverLink');
+
+    function showRecover() {
+      loginForm.hidden = true;
+      recoverForm.hidden = false;
+    }
+    function showLogin() {
+      recoverForm.hidden = true;
+      loginForm.hidden = false;
+    }
+
+    if (recoverLink) recoverLink.addEventListener('click', function (e) { e.preventDefault(); showRecover(); });
+    if (cancelLink) cancelLink.addEventListener('click', function (e) { e.preventDefault(); showLogin(); });
+
+    {%- comment -%} Shopify re-renders this page with the recover form's errors/success on submit — land on it directly rather than the login form. {%- endcomment -%}
+    {%- if form.posted_successfully? or form.errors -%}
+      showRecover();
+    {%- endif -%}
+    if (window.location.hash === '#recover') showRecover();
+  });
+</script>
+
+{% schema %}
+{ "name": "Customer login", "settings": [] }
+{% endschema %}

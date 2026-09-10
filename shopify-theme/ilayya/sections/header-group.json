@@ -1,0 +1,20 @@
+{
+  "name": "Header",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {},
+      "blocks": {
+        "message-1": { "type": "message", "settings": { "message": "FREE DELIVERY ON ORDERS $75+" } },
+        "message-2": { "type": "message", "settings": { "message": "JOIN THE LIST FOR 10% OFF YOUR FIRST ORDER" } }
+      },
+      "block_order": ["message-1", "message-2"]
+    },
+    "header": {
+      "type": "header",
+      "settings": {}
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}
