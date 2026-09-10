@@ -1,6 +1,9 @@
 <div class="cart-page section-padding">
   <div class="container">
-    <h1 class="cart-page__title">{{ 'cart.general.title' | t }}</h1>
+    <div class="cart-page__header">
+      <h1 class="cart-page__title">{{ 'cart.general.title' | t }}</h1>
+      <a href="{{ routes.root_url }}#shop" class="cart-page__return">&larr; Return to shop</a>
+    </div>
 
     {%- if cart.item_count == 0 -%}
       <div class="cart-page__empty">
@@ -36,13 +39,47 @@
           </tbody>
         </table>
 
+        <div class="cart-page__extra">
+          <div class="cart-page__field">
+            <label for="CartPageNote">Add a note to your order</label>
+            <textarea name="note" id="CartPageNote" rows="3">{{ cart.note }}</textarea>
+          </div>
+        </div>
+
         <div class="cart-page__summary">
+          {%- comment -%}
+            Discount code: not a cart-form field (Shopify has no cart-level
+            discount input) — it's a separate form that redirects to the
+            native /discount/<code> activation route, same as the drawer.
+          {%- endcomment -%}
+          <div class="cart-page__discount">
+            <input type="text" id="CartPageDiscountInput" placeholder="Discount code" autocomplete="off">
+            <button type="button" class="btn btn--outline" id="CartPageDiscountApply">Apply</button>
+          </div>
           <p class="cart-page__subtotal">Subtotal <span>{{ cart.total_price | money }}</span></p>
           <p class="cart-page__note">Shipping and taxes calculated at checkout.</p>
           <button type="submit" name="update" class="btn btn--outline">Update Cart</button>
           <button type="submit" name="checkout" class="btn btn--primary">Checkout</button>
         </div>
       {%- endform -%}
+
+      <div class="cross-sell container" id="ProductRecommendations" data-url="{{ routes.product_recommendations_url }}?section_id=product-recommendations&amp;product_id={{ cart.items.first.product_id }}&amp;limit=4" hidden>
+        <div class="cross-sell__head"><h3>You may also like</h3>
+          <div class="cross-sell__nav">
+            <button type="button" class="cross-sell__arrow" data-cross-sell-prev aria-label="Scroll left">&#8249;</button>
+            <button type="button" class="cross-sell__arrow" data-cross-sell-next aria-label="Scroll right">&#8250;</button>
+          </div>
+        </div>
+        <div class="cross-sell__row" id="CrossSellRow"></div>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          if (window.Ilayya && window.Ilayya.initCrossSell) {
+            window.Ilayya.initCrossSell();
+          }
+        });
+      </script>
     {%- endif -%}
   </div>
 </div>

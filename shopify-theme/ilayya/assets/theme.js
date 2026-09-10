@@ -221,6 +221,12 @@
   /* ---------- Cart drawer: Note / Discount quick links ----------
      Delegated to document so the panels keep working after
      refreshCartDrawer() replaces #CartDrawer's innerHTML. */
+  function applyDiscountCode(input) {
+    var code = input && input.value.trim();
+    if (!code) return;
+    window.location.href = '/discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent(routes.rootUrl + 'cart');
+  }
+
   function initCartExtras() {
     function togglePanel(toggleBtn, panel) {
       var isOpen = !panel.hidden;
@@ -258,6 +264,11 @@
             }
           })
           .catch(function () { /* silent fail: note not saved */ });
+        return;
+      }
+      var pageApplyBtn = e.target.closest('#CartPageDiscountApply');
+      if (pageApplyBtn) {
+        applyDiscountCode(qs('#CartPageDiscountInput'));
       }
     });
 
@@ -265,10 +276,7 @@
       var form = e.target.closest('#CartDiscountPanel');
       if (!form) return;
       e.preventDefault();
-      var input = qs('#CartDiscountInput', form);
-      var code = input && input.value.trim();
-      if (!code) return;
-      window.location.href = '/discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent(routes.rootUrl + 'cart');
+      applyDiscountCode(qs('#CartDiscountInput', form));
     });
   }
 

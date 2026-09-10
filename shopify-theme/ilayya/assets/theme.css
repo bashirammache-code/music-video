@@ -863,7 +863,9 @@ p { margin: 0; }
 .filter-price-range .btn { flex-basis: 100%; }
 
 /* ---------- Cart page ---------- */
-.cart-page__title { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 32px; }
+.cart-page__header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 10px; }
+.cart-page__title { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 0; }
+.cart-page__return { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; text-decoration: underline; color: var(--color-accent); }
 .cart-page__empty { text-align: center; padding: 60px 0; display: flex; flex-direction: column; gap: 18px; align-items: center; }
 .cart-table { width: 100%; border-collapse: collapse; }
 .cart-table th { text-align: left; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; padding-bottom: 14px; border-bottom: 1px solid var(--color-border); opacity: .6; }
@@ -871,7 +873,17 @@ p { margin: 0; }
 .cart-table__product { display: flex; gap: 14px; align-items: center; }
 .cart-table__variant { font-size: .78rem; opacity: .6; }
 .cart-table__qty { width: 56px; padding: 6px; border: 1px solid var(--color-border); background: transparent; }
+.cart-page__extra { max-width: 420px; margin-top: 24px; }
+.cart-page__field { display: flex; flex-direction: column; gap: 8px; }
+.cart-page__field label { font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; opacity: .65; }
+.cart-page__field textarea {
+  border: 1px solid var(--color-border); background: var(--color-surface); padding: 12px 14px; font-size: .92rem; resize: vertical;
+}
 .cart-page__summary { max-width: 320px; margin-left: auto; margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+.cart-page__discount { display: flex; gap: 8px; }
+.cart-page__discount input {
+  flex: 1; border: 1px solid var(--color-border); background: var(--color-surface); padding: 10px 12px; font-size: .88rem;
+}
 .cart-page__subtotal { display: flex; justify-content: space-between; font-size: 1.1rem; }
 .cart-page__note { font-size: .78rem; opacity: .6; }
 
