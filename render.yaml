@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: ilayya-whatsapp-agent
+    runtime: node
+    rootDir: whatsapp-agent
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: CLAUDE_MODEL
+        value: claude-sonnet-5-5
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_APP_SECRET
+        sync: false
+      - key: WHATSAPP_VERIFY_TOKEN
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OWNER_NUMBER
+        sync: false

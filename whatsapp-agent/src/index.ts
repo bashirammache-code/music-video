@@ -44,4 +44,6 @@ async function handle(msg: any): Promise<void> {
   }
 }
 
+app.get("/health", (_req, res) => res.send("ok"));
+
 app.listen(Number(process.env.PORT ?? 3000), () => console.log("WhatsApp agent listening"));
